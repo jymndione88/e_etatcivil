@@ -7,8 +7,6 @@ package com.administration.etatcivil.entities;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Set;
-
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -16,7 +14,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -52,9 +49,6 @@ public class Roles implements Serializable {
     private String libelle;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idRole")
     private List<InternauteRoles> internauteRolesList;
-    
-    private Set<Internautes> users;
-    
 
     public Roles() {
     }
@@ -125,17 +119,6 @@ public class Roles implements Serializable {
     @Override
     public String toString() {
         return "com.administration.etatcivil.entities.Roles[ id=" + id + " ]";
-    }
-    
-
-    @ManyToMany(mappedBy = "roles")
-    
-    public Set<Internautes> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<Internautes> users) {
-        this.users = users;
     }
     
 }

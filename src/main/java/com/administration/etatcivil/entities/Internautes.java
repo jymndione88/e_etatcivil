@@ -6,21 +6,15 @@
 package com.administration.etatcivil.entities;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -74,9 +68,6 @@ public class Internautes implements Serializable {
     private Personnes idPersonne;
     @OneToMany(mappedBy = "idInternaute")
     private List<Demandes> demandesList;
-    
-    private Set<Roles> roles;
-    
 
     public Internautes() {
     }
@@ -91,12 +82,6 @@ public class Internautes implements Serializable {
         this.email = email;
         this.password = password;
         this.resetPassword = resetPassword;
-    }
-    
-    public Internautes(String login, String email, String password) {
-        this.login = login;
-        this.email = email;
-        this.password = password;
     }
 
     public Long getId() {
@@ -206,20 +191,6 @@ public class Internautes implements Serializable {
     @Override
     public String toString() {
         return "com.administration.etatcivil.entities.Internautes[ id=" + id + " ]";
-    }
-    
-    @ManyToMany
-    @JoinTable(name = "internaute_roles", 
-      joinColumns = @JoinColumn(name = "id_internaute"),
-      inverseJoinColumns = @JoinColumn(name = "id_role"))
-
-    public Set<Roles> getRoles()
-    {
-        return roles;
-    }
-    public void setRoles(Set<Roles> roles)
-    {
-        this.roles = roles;
     }
     
 }

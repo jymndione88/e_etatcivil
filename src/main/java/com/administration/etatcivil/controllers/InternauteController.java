@@ -19,9 +19,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+//import org.springframework.security.core.Authentication;
+//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+//import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,13 +52,13 @@ public class InternauteController {
 	@Autowired
 	private RoleRepository roleRepository;
 
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+   // private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     
-    public InternauteController(InternauteRepository utilisateurRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
-		this.utilisateurRepository = utilisateurRepository;
-		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-	}
+   // public InternauteController(InternauteRepository utilisateurRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+	//	this.utilisateurRepository = utilisateurRepository;
+		//this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+	//}
     
     public InternauteController() {
 
@@ -71,7 +71,7 @@ public class InternauteController {
 
     @PostMapping("/sign-up")
     public String signUp(@RequestBody Internautes user) {
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+      //  user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         utilisateurRepository.save(user);
         
         return "enregistrer avec succes!";

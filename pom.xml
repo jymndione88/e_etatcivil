@@ -55,8 +55,7 @@
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
-		
+		</dependency> 	
         
 		<!-- https://mvnrepository.com/artifact/com.auth0/java-jwt -->
 		<dependency>
