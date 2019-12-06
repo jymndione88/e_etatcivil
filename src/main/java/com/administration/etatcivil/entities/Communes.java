@@ -23,6 +23,8 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author dev1202
@@ -50,12 +52,18 @@ public class Communes implements Serializable {
     @Column(name = "libelle")
     private String libelle;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idCommune")
+    
+    @JsonIgnore
     private List<EtatCivils> etatCivilsList;
     @JoinColumn(name = "id_arrondissement", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    
+    @JsonIgnore
     private Arrondissements idArrondissement;
     @JoinColumn(name = "id_type_commune", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    
+    @JsonIgnore
     private TypeCommunes idTypeCommune;
 
     public Communes() {

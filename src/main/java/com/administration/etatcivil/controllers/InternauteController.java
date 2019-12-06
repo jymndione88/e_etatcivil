@@ -1,6 +1,6 @@
 package com.administration.etatcivil.controllers;
 
-import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
+//import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 //import static com.galima.security.SecurityConstants.FORGOT_EXPIRATION_TIME;
 //import static com.galima.security.SecurityConstants.FORGOT_SECRET;
 //import static com.galima.security.SecurityConstants.MINPASSWORD;
@@ -37,8 +37,8 @@ import org.springframework.web.server.ResponseStatusException;
 import com.administration.etatcivil.entities.Internautes;
 import com.administration.etatcivil.repositories.InternauteRepository;
 import com.administration.etatcivil.repositories.RoleRepository;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
+//import com.auth0.jwt.JWT;
+//import com.auth0.jwt.algorithms.Algorithm;
 
 
 @CrossOrigin("http://localhost:4200")

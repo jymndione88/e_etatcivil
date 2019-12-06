@@ -38,7 +38,7 @@ public class CommuneController {
     @ResponseBody
 	public ResponseEntity<List<Communes>> getListCommune(){
     	List<Communes> communes= metier.findAll();	
-
+	
     	if (communes == null || communes.isEmpty()){
     		//erreur 204
             return new ResponseEntity<List<Communes>>(HttpStatus.NO_CONTENT);
