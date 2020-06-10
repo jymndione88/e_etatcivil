@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.administration.etatcivil.entities.Livraison;
+import com.administration.etatcivil.entities.Livraisons;
 import com.administration.etatcivil.entities.TypeEtatcivil;
 import com.administration.etatcivil.repositories.LivraisonRepository;
 
@@ -34,14 +34,14 @@ public class LivraisonController {
     @RequestMapping(value= "/livraison", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
-	public ResponseEntity<List<Livraison>> getListLivraison(){
-    	List<Livraison> con= metier.findAll();	
+	public ResponseEntity<List<Livraisons>> getListLivraison(){
+    	List<Livraisons> con= metier.findAll();	
 
     	if (con == null || con.isEmpty()){
     		//erreur 204
-            return new ResponseEntity<List<Livraison>>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<List<Livraisons>>(HttpStatus.NO_CONTENT);
         }else{
-        	return new ResponseEntity<List<Livraison>>(con, HttpStatus.OK);
+        	return new ResponseEntity<List<Livraisons>>(con, HttpStatus.OK);
         }
 
     
@@ -49,7 +49,7 @@ public class LivraisonController {
 	
     @RequestMapping(value= "/livraison", method= RequestMethod.POST)
     @ResponseBody
-	public Livraison addLivraison(@RequestBody Livraison con, HttpServletResponse response){
+	public Livraisons addLivraison(@RequestBody Livraisons con, HttpServletResponse response){
 
     	//Si l'con n'existe pas déja
     	//if(!metier.findByNumero(con.getDescription()).isPresent()){
@@ -62,13 +62,13 @@ public class LivraisonController {
     
     @RequestMapping(value= "/livraison/{id}", method= RequestMethod.PUT)
     @ResponseBody
-	public Livraison updateLivraison(@PathVariable("id") Long id, @RequestBody Livraison con){
+	public Livraisons updateLivraison(@PathVariable("id") Long id, @RequestBody Livraisons con){
 
-Optional<Livraison> optionalart = metier.findById(id);
+Optional<Livraisons> optionalart = metier.findById(id);
     	
         if (optionalart.isPresent()){
         	
-        	Livraison art = optionalart.get();
+        	Livraisons art = optionalart.get();
         	art.setDate(con.getDate());
         	return metier.save(art);
         	
@@ -81,13 +81,13 @@ Optional<Livraison> optionalart = metier.findById(id);
     @RequestMapping(value= "/livraison/{id}", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
-    public Livraison getLivraisonById(@PathVariable("id") Long id) {
+    public Livraisons getLivraisonById(@PathVariable("id") Long id) {
 
-    	Optional<Livraison> optionalart = metier.findById(id);
+    	Optional<Livraisons> optionalart = metier.findById(id);
 
     	if (optionalart.isPresent()){
             
-    		Livraison art = optionalart.get();
+    		Livraisons art = optionalart.get();
     		return art;
     	}else { 
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Livraison non trouvé");
@@ -98,13 +98,13 @@ Optional<Livraison> optionalart = metier.findById(id);
     @ResponseBody
    	public ResponseEntity<Void> deleteLivraison(@PathVariable("id") Long id){
 
-    	Optional<Livraison> optionalart  = metier.findById(id);
+    	Optional<Livraisons> optionalart  = metier.findById(id);
 
         if (!optionalart.isPresent()){
             return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
         }else{
 
-        	Livraison art = optionalart.get();
+        	Livraisons art = optionalart.get();
     		metier.delete(art);
             return new ResponseEntity<Void>(HttpStatus.OK);
         }

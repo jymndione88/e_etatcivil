@@ -21,11 +21,9 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 /**
  *
- * @author dev1202
+ * @author Utilisateur
  */
 @Entity
 @Table(name = "type_communes")
@@ -33,6 +31,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @NamedQueries({
     @NamedQuery(name = "TypeCommunes.findAll", query = "SELECT t FROM TypeCommunes t"),
     @NamedQuery(name = "TypeCommunes.findById", query = "SELECT t FROM TypeCommunes t WHERE t.id = :id"),
+    @NamedQuery(name = "TypeCommunes.findByCode", query = "SELECT t FROM TypeCommunes t WHERE t.code = :code"),
     @NamedQuery(name = "TypeCommunes.findByType", query = "SELECT t FROM TypeCommunes t WHERE t.type = :type")})
 public class TypeCommunes implements Serializable {
 
@@ -43,11 +42,12 @@ public class TypeCommunes implements Serializable {
     @Column(name = "id")
     private Long id;
     @Basic(optional = false)
+    @Column(name = "code")
+    private String code;
+    @Basic(optional = false)
     @Column(name = "type")
     private String type;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idTypeCommune")
-    
-    @JsonIgnore
     private List<Communes> communesList;
 
     public TypeCommunes() {
@@ -57,8 +57,9 @@ public class TypeCommunes implements Serializable {
         this.id = id;
     }
 
-    public TypeCommunes(Long id, String type) {
+    public TypeCommunes(Long id, String code, String type) {
         this.id = id;
+        this.code = code;
         this.type = type;
     }
 
@@ -68,6 +69,14 @@ public class TypeCommunes implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public String getType() {

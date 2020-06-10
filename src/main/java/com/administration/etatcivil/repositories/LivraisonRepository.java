@@ -6,9 +6,9 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.administration.etatcivil.entities.Livraison;
+import com.administration.etatcivil.entities.Livraisons;
 
-public interface LivraisonRepository extends JpaRepository<Livraison, Long> {
+public interface LivraisonRepository extends JpaRepository<Livraisons, Long> {
 
 	//Optional<Livraison> findByNumero(String numero);
 	

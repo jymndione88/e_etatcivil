@@ -23,9 +23,11 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
- * @author dev1202
+ * @author Utilisateur
  */
 @Entity
 @Table(name = "officiers")
@@ -41,6 +43,9 @@ public class Officiers implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idOfficier")
+    @JsonIgnore
+    private List<Mariages> mariagesList;
     @JoinColumn(name = "id_role_officier", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private RoleOfficiers idRoleOfficier;
@@ -51,8 +56,7 @@ public class Officiers implements Serializable {
     @ManyToOne(optional = false)
     private Internautes idInternaute;
     @OneToMany(mappedBy = "idOfficier")
-    private List<Demandes> demandesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idOfficier")
+    @JsonIgnore
     private List<Declarations> declarationsList;
 
     public Officiers() {
@@ -68,6 +72,15 @@ public class Officiers implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @XmlTransient
+    public List<Mariages> getMariagesList() {
+        return mariagesList;
+    }
+
+    public void setMariagesList(List<Mariages> mariagesList) {
+        this.mariagesList = mariagesList;
     }
 
     public RoleOfficiers getIdRoleOfficier() {
@@ -92,15 +105,6 @@ public class Officiers implements Serializable {
 
     public void setIdInternaute(Internautes idInternaute) {
         this.idInternaute = idInternaute;
-    }
-
-    @XmlTransient
-    public List<Demandes> getDemandesList() {
-        return demandesList;
-    }
-
-    public void setDemandesList(List<Demandes> demandesList) {
-        this.demandesList = demandesList;
     }
 
     @XmlTransient

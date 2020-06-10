@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author dev1202
+ * @author Utilisateur
  */
 @Entity
 @Table(name = "mode_livraison")
@@ -44,7 +44,7 @@ public class ModeLivraison implements Serializable {
     @Column(name = "mode")
     private String mode;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idModeLivraison")
-    private List<Livraison> livraisonList;
+    private List<Livraisons> livraisonsList;
 
     public ModeLivraison() {
     }
@@ -75,12 +75,12 @@ public class ModeLivraison implements Serializable {
     }
 
     @XmlTransient
-    public List<Livraison> getLivraisonList() {
-        return livraisonList;
+    public List<Livraisons> getLivraisonsList() {
+        return livraisonsList;
     }
 
-    public void setLivraisonList(List<Livraison> livraisonList) {
-        this.livraisonList = livraisonList;
+    public void setLivraisonsList(List<Livraisons> livraisonsList) {
+        this.livraisonsList = livraisonsList;
     }
 
     @Override

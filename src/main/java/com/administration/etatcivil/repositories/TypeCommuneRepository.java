@@ -7,10 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.administration.etatcivil.entities.TypeCommunes;
+import com.administration.etatcivil.entities.TypeDeclarations;
 
 public interface TypeCommuneRepository extends JpaRepository<TypeCommunes, Long> {
 
-	//Optional<TypeCommunes> findByNumero(String numero);
+	Optional<TypeCommunes> findByCode(String code);
 	
 	 // @Query("SELECT u FROM User u WHERE u.status = ?1 and u.name = ?2") 
 	 //@Query("SELECT b FROM Bien b WHERE b.bien.id = ?1")

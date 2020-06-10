@@ -10,7 +10,7 @@ import com.administration.etatcivil.entities.TypeDeclarations;
 
 public interface TypeDeclarationRepository extends JpaRepository<TypeDeclarations, Long> {
 
-	//Optional<TypeDeclarations> findByNumero(String numero);
+	Optional<TypeDeclarations> findByCode(String code);
 	
 	 // @Query("SELECT u FROM User u WHERE u.status = ?1 and u.name = ?2") 
 	 //@Query("SELECT b FROM Bien b WHERE b.bien.id = ?1")

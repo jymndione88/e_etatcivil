@@ -24,9 +24,11 @@ import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
- * @author dev1202
+ * @author Utilisateur
  */
 @Entity
 @Table(name = "personnes")
@@ -71,10 +73,10 @@ public class Personnes implements Serializable {
     @Column(name = "NIN")
     private int nin;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPersonne")
+    @JsonIgnore
     private List<Internautes> internautesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPersonne")
-    private List<Concernes> concernesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPersonne")
+    @JsonIgnore
     private List<Parents> parentsList;
 
     public Personnes() {
@@ -165,15 +167,6 @@ public class Personnes implements Serializable {
 
     public void setInternautesList(List<Internautes> internautesList) {
         this.internautesList = internautesList;
-    }
-
-    @XmlTransient
-    public List<Concernes> getConcernesList() {
-        return concernesList;
-    }
-
-    public void setConcernesList(List<Concernes> concernesList) {
-        this.concernesList = concernesList;
     }
 
     @XmlTransient

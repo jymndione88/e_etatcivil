@@ -6,11 +6,11 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.administration.etatcivil.entities.Declarants;
+import com.administration.etatcivil.entities.Deces;
 
-public interface DeclarantRepository extends JpaRepository<Declarants, Long> {
+public interface DecesRepository extends JpaRepository<Deces, Long> {
 
-	//Optional<Declarants> findByNumero(String numero);
+	//Optional<Deces> findByCode(String code);
 	
 	 // @Query("SELECT u FROM User u WHERE u.status = ?1 and u.name = ?2") 
 	 //@Query("SELECT b FROM Bien b WHERE b.bien.id = ?1")

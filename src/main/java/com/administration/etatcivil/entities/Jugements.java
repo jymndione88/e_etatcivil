@@ -24,9 +24,11 @@ import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
- * @author dev1202
+ * @author Utilisateur
  */
 @Entity
 @Table(name = "jugements")
@@ -35,7 +37,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Jugements.findAll", query = "SELECT j FROM Jugements j"),
     @NamedQuery(name = "Jugements.findById", query = "SELECT j FROM Jugements j WHERE j.id = :id"),
     @NamedQuery(name = "Jugements.findByNumero", query = "SELECT j FROM Jugements j WHERE j.numero = :numero"),
-    @NamedQuery(name = "Jugements.findByDate", query = "SELECT j FROM Jugements j WHERE j.date = :date")})
+    @NamedQuery(name = "Jugements.findByDate", query = "SELECT j FROM Jugements j WHERE j.date = :date"),
+    @NamedQuery(name = "Jugements.findByLieu", query = "SELECT j FROM Jugements j WHERE j.lieu = :lieu")})
 public class Jugements implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -51,11 +54,15 @@ public class Jugements implements Serializable {
     @Column(name = "date")
     @Temporal(TemporalType.DATE)
     private Date date;
+    @Basic(optional = false)
+    @Column(name = "lieu")
+    private String lieu;
     @Lob
     @Column(name = "piece_jointe")
     private byte[] pieceJointe;
     @OneToMany(mappedBy = "idJugement")
-    private List<Declarations> declarationsList;
+    @JsonIgnore
+    private List<Naissances> naissancesList;
 
     public Jugements() {
     }
@@ -64,10 +71,11 @@ public class Jugements implements Serializable {
         this.id = id;
     }
 
-    public Jugements(Long id, String numero, Date date) {
+    public Jugements(Long id, String numero, Date date, String lieu) {
         this.id = id;
         this.numero = numero;
         this.date = date;
+        this.lieu = lieu;
     }
 
     public Long getId() {
@@ -94,6 +102,14 @@ public class Jugements implements Serializable {
         this.date = date;
     }
 
+    public String getLieu() {
+        return lieu;
+    }
+
+    public void setLieu(String lieu) {
+        this.lieu = lieu;
+    }
+
     public byte[] getPieceJointe() {
         return pieceJointe;
     }
@@ -103,12 +119,12 @@ public class Jugements implements Serializable {
     }
 
     @XmlTransient
-    public List<Declarations> getDeclarationsList() {
-        return declarationsList;
+    public List<Naissances> getNaissancesList() {
+        return naissancesList;
     }
 
-    public void setDeclarationsList(List<Declarations> declarationsList) {
-        this.declarationsList = declarationsList;
+    public void setNaissancesList(List<Naissances> naissancesList) {
+        this.naissancesList = naissancesList;
     }
 
     @Override

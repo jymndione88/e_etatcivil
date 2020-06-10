@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author dev1202
+ * @author Utilisateur
  */
 @Entity
 @Table(name = "demandes")
@@ -38,7 +38,16 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Demandes.findById", query = "SELECT d FROM Demandes d WHERE d.id = :id"),
     @NamedQuery(name = "Demandes.findByNumero", query = "SELECT d FROM Demandes d WHERE d.numero = :numero"),
     @NamedQuery(name = "Demandes.findByDate", query = "SELECT d FROM Demandes d WHERE d.date = :date"),
-    @NamedQuery(name = "Demandes.findByIdDeclaration", query = "SELECT d FROM Demandes d WHERE d.idDeclaration = :idDeclaration")})
+    @NamedQuery(name = "Demandes.findByMotif", query = "SELECT d FROM Demandes d WHERE d.motif = :motif"),
+    @NamedQuery(name = "Demandes.findByQualiteDemandeur", query = "SELECT d FROM Demandes d WHERE d.qualiteDemandeur = :qualiteDemandeur"),
+    @NamedQuery(name = "Demandes.findByNatureActe", query = "SELECT d FROM Demandes d WHERE d.natureActe = :natureActe"),
+    @NamedQuery(name = "Demandes.findByNbreExemplaire", query = "SELECT d FROM Demandes d WHERE d.nbreExemplaire = :nbreExemplaire"),
+    @NamedQuery(name = "Demandes.findByCivilite", query = "SELECT d FROM Demandes d WHERE d.civilite = :civilite"),
+    @NamedQuery(name = "Demandes.findByNom", query = "SELECT d FROM Demandes d WHERE d.nom = :nom"),
+    @NamedQuery(name = "Demandes.findByPrenom", query = "SELECT d FROM Demandes d WHERE d.prenom = :prenom"),
+    @NamedQuery(name = "Demandes.findByDatenaiss", query = "SELECT d FROM Demandes d WHERE d.datenaiss = :datenaiss"),
+    @NamedQuery(name = "Demandes.findByPays", query = "SELECT d FROM Demandes d WHERE d.pays = :pays"),
+    @NamedQuery(name = "Demandes.findByNationalite", query = "SELECT d FROM Demandes d WHERE d.nationalite = :nationalite")})
 public class Demandes implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -55,21 +64,55 @@ public class Demandes implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date date;
     @Basic(optional = false)
-    @Column(name = "id_declaration")
-    private long idDeclaration;
+    @Column(name = "motif")
+    private String motif;
+    @Basic(optional = false)
+    @Column(name = "qualite_demandeur")
+    private String qualiteDemandeur;
+    @Basic(optional = false)
+    @Column(name = "nature_acte")
+    private String natureActe;
+    @Basic(optional = false)
+    @Column(name = "nbre_exemplaire")
+    private int nbreExemplaire;
+    @Basic(optional = false)
+    @Column(name = "civilite")
+    private String civilite;
+    @Basic(optional = false)
+    @Column(name = "nom")
+    private String nom;
+    @Basic(optional = false)
+    @Column(name = "prenom")
+    private String prenom;
+    @Basic(optional = false)
+    @Column(name = "datenaiss")
+    @Temporal(TemporalType.DATE)
+    private Date datenaiss;
+    @Basic(optional = false)
+    @Column(name = "pays")
+    private String pays;
+    @Basic(optional = false)
+    @Column(name = "nationalite")
+    private String nationalite;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDemande")
     private List<Factures> facturesList;
-    @JoinColumn(name = "id_internaute", referencedColumnName = "id")
-    @ManyToOne
-    private Internautes idInternaute;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDemande")
+    private List<Livraisons> livraisonsList;
     @JoinColumn(name = "id_etat_demande", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private EtatDemandes idEtatDemande;
-    @JoinColumn(name = "id_officier", referencedColumnName = "id")
-    @ManyToOne
-    private Officiers idOfficier;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDemande")
-    private List<Livraison> livraisonList;
+    @JoinColumn(name = "id_commune", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Communes idCommune;
+    @JoinColumn(name = "id_deces", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Deces idDeces;
+    @JoinColumn(name = "id_mariage", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Mariages idMariage;
+    @JoinColumn(name = "id_naissance", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Naissances idNaissance;
 
     public Demandes() {
     }
@@ -78,11 +121,20 @@ public class Demandes implements Serializable {
         this.id = id;
     }
 
-    public Demandes(Long id, String numero, Date date, long idDeclaration) {
+    public Demandes(Long id, String numero, Date date, String motif, String qualiteDemandeur, String natureActe, int nbreExemplaire, String civilite, String nom, String prenom, Date datenaiss, String pays, String nationalite) {
         this.id = id;
         this.numero = numero;
         this.date = date;
-        this.idDeclaration = idDeclaration;
+        this.motif = motif;
+        this.qualiteDemandeur = qualiteDemandeur;
+        this.natureActe = natureActe;
+        this.nbreExemplaire = nbreExemplaire;
+        this.civilite = civilite;
+        this.nom = nom;
+        this.prenom = prenom;
+        this.datenaiss = datenaiss;
+        this.pays = pays;
+        this.nationalite = nationalite;
     }
 
     public Long getId() {
@@ -109,12 +161,84 @@ public class Demandes implements Serializable {
         this.date = date;
     }
 
-    public long getIdDeclaration() {
-        return idDeclaration;
+    public String getMotif() {
+        return motif;
     }
 
-    public void setIdDeclaration(long idDeclaration) {
-        this.idDeclaration = idDeclaration;
+    public void setMotif(String motif) {
+        this.motif = motif;
+    }
+
+    public String getQualiteDemandeur() {
+        return qualiteDemandeur;
+    }
+
+    public void setQualiteDemandeur(String qualiteDemandeur) {
+        this.qualiteDemandeur = qualiteDemandeur;
+    }
+
+    public String getNatureActe() {
+        return natureActe;
+    }
+
+    public void setNatureActe(String natureActe) {
+        this.natureActe = natureActe;
+    }
+
+    public int getNbreExemplaire() {
+        return nbreExemplaire;
+    }
+
+    public void setNbreExemplaire(int nbreExemplaire) {
+        this.nbreExemplaire = nbreExemplaire;
+    }
+
+    public String getCivilite() {
+        return civilite;
+    }
+
+    public void setCivilite(String civilite) {
+        this.civilite = civilite;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public String getPrenom() {
+        return prenom;
+    }
+
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
+    }
+
+    public Date getDatenaiss() {
+        return datenaiss;
+    }
+
+    public void setDatenaiss(Date datenaiss) {
+        this.datenaiss = datenaiss;
+    }
+
+    public String getPays() {
+        return pays;
+    }
+
+    public void setPays(String pays) {
+        this.pays = pays;
+    }
+
+    public String getNationalite() {
+        return nationalite;
+    }
+
+    public void setNationalite(String nationalite) {
+        this.nationalite = nationalite;
     }
 
     @XmlTransient
@@ -126,12 +250,13 @@ public class Demandes implements Serializable {
         this.facturesList = facturesList;
     }
 
-    public Internautes getIdInternaute() {
-        return idInternaute;
+    @XmlTransient
+    public List<Livraisons> getLivraisonsList() {
+        return livraisonsList;
     }
 
-    public void setIdInternaute(Internautes idInternaute) {
-        this.idInternaute = idInternaute;
+    public void setLivraisonsList(List<Livraisons> livraisonsList) {
+        this.livraisonsList = livraisonsList;
     }
 
     public EtatDemandes getIdEtatDemande() {
@@ -142,21 +267,36 @@ public class Demandes implements Serializable {
         this.idEtatDemande = idEtatDemande;
     }
 
-    public Officiers getIdOfficier() {
-        return idOfficier;
+    public Communes getIdCommune() {
+        return idCommune;
     }
 
-    public void setIdOfficier(Officiers idOfficier) {
-        this.idOfficier = idOfficier;
+    public void setIdCommune(Communes idCommune) {
+        this.idCommune = idCommune;
     }
 
-    @XmlTransient
-    public List<Livraison> getLivraisonList() {
-        return livraisonList;
+    public Deces getIdDeces() {
+        return idDeces;
     }
 
-    public void setLivraisonList(List<Livraison> livraisonList) {
-        this.livraisonList = livraisonList;
+    public void setIdDeces(Deces idDeces) {
+        this.idDeces = idDeces;
+    }
+
+    public Mariages getIdMariage() {
+        return idMariage;
+    }
+
+    public void setIdMariage(Mariages idMariage) {
+        this.idMariage = idMariage;
+    }
+
+    public Naissances getIdNaissance() {
+        return idNaissance;
+    }
+
+    public void setIdNaissance(Naissances idNaissance) {
+        this.idNaissance = idNaissance;
     }
 
     @Override

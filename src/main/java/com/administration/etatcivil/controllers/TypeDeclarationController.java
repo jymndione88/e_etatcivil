@@ -38,7 +38,7 @@ public class TypeDeclarationController {
 
     	if (con == null || con.isEmpty()){
     		//erreur 204
-            return new ResponseEntity<List<TypeDeclarations>>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<List<TypeDeclarations>>(HttpStatus.NOT_FOUND);
         }else{
         	
         	return new ResponseEntity<List<TypeDeclarations>>(con, HttpStatus.OK);
@@ -48,32 +48,34 @@ public class TypeDeclarationController {
 	}
 	
     @RequestMapping(value= "/typedeclaration", method= RequestMethod.POST)
-    @ResponseBody
-	public TypeDeclarations addTypeDeclaration(@RequestBody TypeDeclarations con, HttpServletResponse response){
-
+	public ResponseEntity<?> addTypeDeclaration(@RequestBody TypeDeclarations con){
+    	
     	//Si l'con n'existe pas déja
-    	//if(!metier.findByNumero(con.getType()).isPresent()){
-    		//return metier.save(con);
-    	//}else {
-    		//throw new ResponseStatusException(HttpStatus.FORBIDDEN, "TypeDeclarations existe déjà");
-    	//}
-    	return null;
+    	if(metier.findByCode(con.getCode())!= null){
+    		 metier.save(con);
+    		return new ResponseEntity<>(con, HttpStatus.CREATED);
+    	}else {
+    		return new ResponseEntity<>("TypeDeclarations existe déjà", HttpStatus.CONFLICT);
+    	}
+    	
 	}
     
     @RequestMapping(value= "/typedeclaration/{id}", method= RequestMethod.PUT)
-    @ResponseBody
-	public TypeDeclarations updateTypeDeclaration(@PathVariable("id") Long id, @RequestBody TypeDeclarations con){
+	public ResponseEntity<?> updateTypeDeclaration(@PathVariable("id") Long id, @RequestBody TypeDeclarations con){
 
 Optional<TypeDeclarations> optionalart = metier.findById(id);
     	
-        if (optionalart.isPresent()){
-        	
-        	TypeDeclarations art = optionalart.get();
-        	art.setType(con.getType());
-        	return metier.save(art);
+        if (optionalart== null){
+        	 return new ResponseEntity<>("TypeDeclaration non trouvé", HttpStatus.NOT_FOUND);
         	
         }else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "TypeDeclaration non trouvé");
+        	TypeDeclarations art = optionalart.get();
+        	art.setCode(con.getCode());
+        	art.setType(con.getType());
+        	metier.save(art);
+        	
+        	return new ResponseEntity<>(art, HttpStatus.OK);
+        	
 		}
     
 	}
@@ -81,16 +83,14 @@ Optional<TypeDeclarations> optionalart = metier.findById(id);
     @RequestMapping(value= "/typedeclaration/{id}", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
-    public TypeDeclarations getTypeDeclarationById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getTypeDeclarationById(@PathVariable("id") Long id) {
 
     	Optional<TypeDeclarations> optionalart = metier.findById(id);
 
-    	if (optionalart.isPresent()){
-            
-    		TypeDeclarations art = optionalart.get();
-    		return art;
+    	if (optionalart== null){
+    		return new ResponseEntity<>("TypeDeclaration non trouvé", HttpStatus.NOT_FOUND);
     	}else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "TypeDeclaration non trouvé");
+    		return new ResponseEntity<>(optionalart, HttpStatus.OK);
 		}
         
     }
@@ -101,7 +101,7 @@ Optional<TypeDeclarations> optionalart = metier.findById(id);
 
     	Optional<TypeDeclarations> optionalart  = metier.findById(id);
 
-        if (!optionalart.isPresent()){
+        if (optionalart== null){
             return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
         }else{
 

@@ -7,7 +7,9 @@ package com.administration.etatcivil.entities;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,14 +19,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
- * @author dev1202
+ * @author Utilisateur
  */
 @Entity
 @Table(name = "declarations")
@@ -34,7 +40,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Declarations.findById", query = "SELECT d FROM Declarations d WHERE d.id = :id"),
     @NamedQuery(name = "Declarations.findByNumero", query = "SELECT d FROM Declarations d WHERE d.numero = :numero"),
     @NamedQuery(name = "Declarations.findByDate", query = "SELECT d FROM Declarations d WHERE d.date = :date"),
-    @NamedQuery(name = "Declarations.findByMentionMarginal", query = "SELECT d FROM Declarations d WHERE d.mentionMarginal = :mentionMarginal")})
+    @NamedQuery(name = "Declarations.findByQualiteDeclarant", query = "SELECT d FROM Declarations d WHERE d.qualiteDeclarant = :qualiteDeclarant")})
 public class Declarations implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -50,20 +56,21 @@ public class Declarations implements Serializable {
     @Column(name = "date")
     @Temporal(TemporalType.DATE)
     private Date date;
-    @Column(name = "mention_marginal")
-    private String mentionMarginal;
-    @JoinColumn(name = "id_declarant", referencedColumnName = "id")
+    @Basic(optional = false)
+    @Column(name = "qualite_declarant")
+    private String qualiteDeclarant;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDeclaration")
+    @JsonIgnore
+    private List<Deces> decesList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDeclaration")
+    @JsonIgnore
+    private List<Naissances> naissancesList;
+    @JoinColumn(name = "id_internaute", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Declarants idDeclarant;
-    @JoinColumn(name = "id_jugement", referencedColumnName = "id")
-    @ManyToOne
-    private Jugements idJugement;
+    private Internautes idInternaute;
     @JoinColumn(name = "id_officier", referencedColumnName = "id")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Officiers idOfficier;
-    @JoinColumn(name = "id_type_declaration", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private TypeDeclarations idTypeDeclaration;
 
     public Declarations() {
     }
@@ -72,10 +79,11 @@ public class Declarations implements Serializable {
         this.id = id;
     }
 
-    public Declarations(Long id, String numero, Date date) {
+    public Declarations(Long id, String numero, Date date, String qualiteDeclarant) {
         this.id = id;
         this.numero = numero;
         this.date = date;
+        this.qualiteDeclarant = qualiteDeclarant;
     }
 
     public Long getId() {
@@ -102,28 +110,38 @@ public class Declarations implements Serializable {
         this.date = date;
     }
 
-    public String getMentionMarginal() {
-        return mentionMarginal;
+    public String getQualiteDeclarant() {
+        return qualiteDeclarant;
     }
 
-    public void setMentionMarginal(String mentionMarginal) {
-        this.mentionMarginal = mentionMarginal;
+    public void setQualiteDeclarant(String qualiteDeclarant) {
+        this.qualiteDeclarant = qualiteDeclarant;
     }
 
-    public Declarants getIdDeclarant() {
-        return idDeclarant;
+    @XmlTransient
+    public List<Deces> getDecesList() {
+        return decesList;
     }
 
-    public void setIdDeclarant(Declarants idDeclarant) {
-        this.idDeclarant = idDeclarant;
+    public void setDecesList(List<Deces> decesList) {
+        this.decesList = decesList;
     }
 
-    public Jugements getIdJugement() {
-        return idJugement;
+    @XmlTransient
+    public List<Naissances> getNaissancesList() {
+        return naissancesList;
     }
 
-    public void setIdJugement(Jugements idJugement) {
-        this.idJugement = idJugement;
+    public void setNaissancesList(List<Naissances> naissancesList) {
+        this.naissancesList = naissancesList;
+    }
+
+    public Internautes getIdInternaute() {
+        return idInternaute;
+    }
+
+    public void setIdInternaute(Internautes idInternaute) {
+        this.idInternaute = idInternaute;
     }
 
     public Officiers getIdOfficier() {
@@ -132,14 +150,6 @@ public class Declarations implements Serializable {
 
     public void setIdOfficier(Officiers idOfficier) {
         this.idOfficier = idOfficier;
-    }
-
-    public TypeDeclarations getIdTypeDeclaration() {
-        return idTypeDeclaration;
-    }
-
-    public void setIdTypeDeclaration(TypeDeclarations idTypeDeclaration) {
-        this.idTypeDeclaration = idTypeDeclaration;
     }
 
     @Override

@@ -70,7 +70,7 @@ Optional<Mariages> optionalart = metier.findById(id);
         if (optionalart.isPresent()){
         	
         	Mariages art = optionalart.get();
-        	art.setRegim(con.getRegim());
+        	//art.setRegim(con.getRegim());
         	return metier.save(art);
         	
         }else { 

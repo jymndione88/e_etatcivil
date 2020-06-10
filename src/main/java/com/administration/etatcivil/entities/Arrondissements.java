@@ -23,11 +23,9 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 /**
  *
- * @author dev1202
+ * @author Utilisateur
  */
 @Entity
 @Table(name = "arrondissements")
@@ -52,13 +50,9 @@ public class Arrondissements implements Serializable {
     @Column(name = "libelle")
     private String libelle;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idArrondissement")
-    
-    @JsonIgnore
     private List<Communes> communesList;
     @JoinColumn(name = "id_departement", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    
-    @JsonIgnore
     private Departements idDepartement;
 
     public Arrondissements() {

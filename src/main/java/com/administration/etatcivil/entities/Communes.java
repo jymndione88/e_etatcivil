@@ -23,11 +23,9 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 /**
  *
- * @author dev1202
+ * @author Utilisateur
  */
 @Entity
 @Table(name = "communes")
@@ -52,19 +50,15 @@ public class Communes implements Serializable {
     @Column(name = "libelle")
     private String libelle;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idCommune")
-    
-    @JsonIgnore
     private List<EtatCivils> etatCivilsList;
     @JoinColumn(name = "id_arrondissement", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    
-    @JsonIgnore
     private Arrondissements idArrondissement;
     @JoinColumn(name = "id_type_commune", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    
-    @JsonIgnore
     private TypeCommunes idTypeCommune;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idCommune")
+    private List<Demandes> demandesList;
 
     public Communes() {
     }
@@ -126,6 +120,15 @@ public class Communes implements Serializable {
 
     public void setIdTypeCommune(TypeCommunes idTypeCommune) {
         this.idTypeCommune = idTypeCommune;
+    }
+
+    @XmlTransient
+    public List<Demandes> getDemandesList() {
+        return demandesList;
+    }
+
+    public void setDemandesList(List<Demandes> demandesList) {
+        this.demandesList = demandesList;
     }
 
     @Override

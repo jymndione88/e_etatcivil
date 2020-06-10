@@ -6,9 +6,7 @@
 package com.administration.etatcivil.entities;
 
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,16 +14,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
- * @author dev1202
+ * @author Utilisateur
  */
 @Entity
 @Table(name = "type_declarations")
@@ -33,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @NamedQueries({
     @NamedQuery(name = "TypeDeclarations.findAll", query = "SELECT t FROM TypeDeclarations t"),
     @NamedQuery(name = "TypeDeclarations.findById", query = "SELECT t FROM TypeDeclarations t WHERE t.id = :id"),
+    @NamedQuery(name = "TypeDeclarations.findByCode", query = "SELECT t FROM TypeDeclarations t WHERE t.code = :code"),
     @NamedQuery(name = "TypeDeclarations.findByType", query = "SELECT t FROM TypeDeclarations t WHERE t.type = :type")})
 public class TypeDeclarations implements Serializable {
 
@@ -43,12 +38,11 @@ public class TypeDeclarations implements Serializable {
     @Column(name = "id")
     private Long id;
     @Basic(optional = false)
+    @Column(name = "code")
+    private String code;
+    @Basic(optional = false)
     @Column(name = "type")
     private String type;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idTypeDeclaration")
-    
-    @JsonIgnore
-    private List<Declarations> declarationsList;
 
     public TypeDeclarations() {
     }
@@ -57,8 +51,9 @@ public class TypeDeclarations implements Serializable {
         this.id = id;
     }
 
-    public TypeDeclarations(Long id, String type) {
+    public TypeDeclarations(Long id, String code, String type) {
         this.id = id;
+        this.code = code;
         this.type = type;
     }
 
@@ -70,21 +65,20 @@ public class TypeDeclarations implements Serializable {
         this.id = id;
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
     public String getType() {
         return type;
     }
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    @XmlTransient
-    public List<Declarations> getDeclarationsList() {
-        return declarationsList;
-    }
-
-    public void setDeclarationsList(List<Declarations> declarationsList) {
-        this.declarationsList = declarationsList;
     }
 
     @Override

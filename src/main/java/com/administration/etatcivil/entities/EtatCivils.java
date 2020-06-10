@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author dev1202
+ * @author Utilisateur
  */
 @Entity
 @Table(name = "etat_civils")
@@ -61,8 +61,6 @@ public class EtatCivils implements Serializable {
     private TypeEtatcivil idTypeEtatCivil;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEtatCivil")
     private List<Officiers> officiersList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEtatCivil")
-    private List<Concernes> concernesList;
 
     public EtatCivils() {
     }
@@ -142,15 +140,6 @@ public class EtatCivils implements Serializable {
 
     public void setOfficiersList(List<Officiers> officiersList) {
         this.officiersList = officiersList;
-    }
-
-    @XmlTransient
-    public List<Concernes> getConcernesList() {
-        return concernesList;
-    }
-
-    public void setConcernesList(List<Concernes> concernesList) {
-        this.concernesList = concernesList;
     }
 
     @Override

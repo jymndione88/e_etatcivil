@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author dev1202
+ * @author Utilisateur
  */
 @Entity
 @Table(name = "lieu_hospitalier")
@@ -48,11 +48,11 @@ public class LieuHospitalier implements Serializable {
     @Basic(optional = false)
     @Column(name = "libelle")
     private String libelle;
+    @OneToMany(mappedBy = "idLieuHospitalier")
+    private List<Deces> decesList;
     @JoinColumn(name = "id_etat_civil", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private EtatCivils idEtatCivil;
-    @OneToMany(mappedBy = "idLieuHospitalier")
-    private List<Concernes> concernesList;
 
     public LieuHospitalier() {
     }
@@ -91,21 +91,21 @@ public class LieuHospitalier implements Serializable {
         this.libelle = libelle;
     }
 
+    @XmlTransient
+    public List<Deces> getDecesList() {
+        return decesList;
+    }
+
+    public void setDecesList(List<Deces> decesList) {
+        this.decesList = decesList;
+    }
+
     public EtatCivils getIdEtatCivil() {
         return idEtatCivil;
     }
 
     public void setIdEtatCivil(EtatCivils idEtatCivil) {
         this.idEtatCivil = idEtatCivil;
-    }
-
-    @XmlTransient
-    public List<Concernes> getConcernesList() {
-        return concernesList;
-    }
-
-    public void setConcernesList(List<Concernes> concernesList) {
-        this.concernesList = concernesList;
     }
 
     @Override

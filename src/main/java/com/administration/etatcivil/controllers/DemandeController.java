@@ -22,6 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.administration.etatcivil.entities.Demandes;
 import com.administration.etatcivil.entities.TypeEtatcivil;
 import com.administration.etatcivil.repositories.DemandeRepository;
+import java.lang.String;
 
 @CrossOrigin("http://localhost:4200")
 @RequestMapping(value= "/api")
@@ -31,15 +32,24 @@ public class DemandeController {
 	@Autowired
 	private DemandeRepository metier;
 	                      
-    @RequestMapping(value= "/demande", method= RequestMethod.GET,
+    @RequestMapping(value= "/demande/{nat}", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
-	public ResponseEntity<List<Demandes>> getListDemande(){
-    	List<Demandes> con= metier.findAll();	
-
+	public ResponseEntity<List<Demandes>> getListDemande(@PathVariable("nat") String nat){
+    	
+    	List<Demandes> con= null;
+    			
+    	if(nat.equals("naissance")) {
+    		con= metier.findByNaissance();	
+    	}else if (nat.equals("mariage")) {
+    		con= metier.findByMariage();	
+		}else if (nat.equals("deces")) {
+			con= metier.findByDeces();	
+		}
+    	
     	if (con == null || con.isEmpty()){
     		//erreur 204
-            return new ResponseEntity<List<Demandes>>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<List<Demandes>>(HttpStatus.NOT_FOUND);
         }else{
 
         	return new ResponseEntity<List<Demandes>>(con, HttpStatus.OK);
@@ -49,31 +59,42 @@ public class DemandeController {
 	
     @RequestMapping(value= "/demande", method= RequestMethod.POST)
     @ResponseBody
-	public Demandes addDemande(@RequestBody Demandes con, HttpServletResponse response){
+	public ResponseEntity<?> addDemande(@RequestBody Demandes con, HttpServletResponse response){
 
-    	//Si l'con n'existe pas déja
-    	//if(!metier.findByNumero(con.getNumero()).isPresent()){
-    		//return metier.save(con);
-    	//}else {
-    		//throw new ResponseStatusException(HttpStatus.FORBIDDEN, "demande existe déjà");
-    	//}
-    	return null;
+    	metier.save(con);
+    	return new ResponseEntity<>(con, HttpStatus.CREATED);
+    	
 	}
     
     @RequestMapping(value= "/demande/{id}", method= RequestMethod.PUT)
     @ResponseBody
-	public Demandes updateDemande(@PathVariable("id") Long id, @RequestBody Demandes con){
+	public ResponseEntity<?> updateDemande(@PathVariable("id") Long id, @RequestBody Demandes con){
 
 Optional<Demandes> optionalart = metier.findById(id);
     	
-        if (optionalart.isPresent()){
-        	
-        	Demandes art = optionalart.get();
-        	art.setNumero(con.getNumero());
-        	return metier.save(art);
+        if (optionalart== null){
+        	return new ResponseEntity<>("demande non trouvé", HttpStatus.NOT_FOUND);
         	
         }else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "demande non trouvé");
+        	Demandes art = optionalart.get();
+        	art.setNumero(con.getNumero());
+        	art.setDate(con.getDate());
+        	art.setMotif(con.getMotif());
+        	art.setQualiteDemandeur(con.getQualiteDemandeur());        	
+        	art.setNatureActe(con.getNatureActe());
+        	art.setNbreExemplaire(con.getNbreExemplaire());
+        	art.setCivilite(con.getCivilite());
+        	art.setNom(con.getNom());
+        	art.setPrenom(con.getPrenom());
+        	
+        	art.setDatenaiss(con.getDate());
+        	art.setPays(con.getPays());
+        	art.setNationalite(con.getNationalite());
+        	//art.setEtat(con.getEtat());
+        	
+        	art.setIdCommune(con.getIdCommune());
+
+        	return new ResponseEntity<>(art, HttpStatus.OK);
 		}
         
 	}
@@ -81,16 +102,15 @@ Optional<Demandes> optionalart = metier.findById(id);
     @RequestMapping(value= "/demande/{id}", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
-    public Demandes getDemandeById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getDemandeById(@PathVariable("id") Long id) {
 
     	Optional<Demandes> optionalart = metier.findById(id);
 
-    	if (optionalart.isPresent()){
-            
-    		Demandes art = optionalart.get();
-    		return art;
+    	if (optionalart== null){
+    		return new ResponseEntity<>("demande non trouvé", HttpStatus.NOT_FOUND);
+    		
     	}else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "demande non trouvé");
+    		return new ResponseEntity<>(optionalart, HttpStatus.OK);
 		}
 
     }
@@ -101,7 +121,7 @@ Optional<Demandes> optionalart = metier.findById(id);
 
     	Optional<Demandes> optionalart  = metier.findById(id);
 
-        if (!optionalart.isPresent()){
+        if (optionalart== null){
             return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
         }else{
 

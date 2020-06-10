@@ -23,9 +23,11 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
- * @author dev1202
+ * @author Utilisateur
  */
 @Entity
 @Table(name = "internautes")
@@ -60,14 +62,14 @@ public class Internautes implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idInternaute")
     private List<InternauteRoles> internauteRolesList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idInternaute")
+    @JsonIgnore
     private List<Officiers> officiersList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idInternaute")
-    private List<Declarants> declarantsList;
     @JoinColumn(name = "id_personne", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Personnes idPersonne;
-    @OneToMany(mappedBy = "idInternaute")
-    private List<Demandes> demandesList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idInternaute")
+    @JsonIgnore
+    private List<Declarations> declarationsList;
 
     public Internautes() {
     }
@@ -142,15 +144,6 @@ public class Internautes implements Serializable {
         this.officiersList = officiersList;
     }
 
-    @XmlTransient
-    public List<Declarants> getDeclarantsList() {
-        return declarantsList;
-    }
-
-    public void setDeclarantsList(List<Declarants> declarantsList) {
-        this.declarantsList = declarantsList;
-    }
-
     public Personnes getIdPersonne() {
         return idPersonne;
     }
@@ -160,12 +153,12 @@ public class Internautes implements Serializable {
     }
 
     @XmlTransient
-    public List<Demandes> getDemandesList() {
-        return demandesList;
+    public List<Declarations> getDeclarationsList() {
+        return declarationsList;
     }
 
-    public void setDemandesList(List<Demandes> demandesList) {
-        this.demandesList = demandesList;
+    public void setDeclarationsList(List<Declarations> declarationsList) {
+        this.declarationsList = declarationsList;
     }
 
     @Override

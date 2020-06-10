@@ -39,7 +39,7 @@ public class TypeCommuneController {
 
     	if (con == null || con.isEmpty()){
     		//erreur 204
-            return new ResponseEntity<List<TypeCommunes>>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<List<TypeCommunes>>(HttpStatus.NOT_FOUND);
         }else{
 
         	return new ResponseEntity<List<TypeCommunes>>(con, HttpStatus.OK);
@@ -49,32 +49,35 @@ public class TypeCommuneController {
 	
     @RequestMapping(value= "/typecommune", method= RequestMethod.POST)
     @ResponseBody
-	public TypeCommunes addTypeCommune(@RequestBody TypeCommunes con, HttpServletResponse response){
+	public  ResponseEntity<?> addTypeCommune(@RequestBody TypeCommunes con){
 
     	//Si l'con n'existe pas déja
-    	//if(!metier.findByNumero(con.getType()).isPresent()){
-    		//return metier.save(con);
-    	//}else {
-    		//throw new ResponseStatusException(HttpStatus.FORBIDDEN, "TypeCommune existe déjà");
-    	//}
-    	return null;
-
+    	if(metier.findByCode(con.getCode())!= null){
+    		 metier.save(con);
+    		return new ResponseEntity<>(con, HttpStatus.CREATED);
+    	}else {
+    		return new ResponseEntity<>("TypeCommune existe déjà", HttpStatus.CONFLICT);
+    		
+    	}
+    	
 	}
     
     @RequestMapping(value= "/typecommune/{id}", method= RequestMethod.PUT)
     @ResponseBody
-	public TypeCommunes updateTypeCommune(@PathVariable("id") Long id, @RequestBody TypeCommunes con){
+	public ResponseEntity<?> updateTypeCommune(@PathVariable("id") Long id, @RequestBody TypeCommunes con){
 
 Optional<TypeCommunes> optionalart = metier.findById(id);
     	
-        if (optionalart.isPresent()){
-        	
-        	TypeCommunes art = optionalart.get();
-        	art.setType(con.getType());
-        	return metier.save(art);
+        if (optionalart== null){
+       	 return new ResponseEntity<>("TypeCommune non trouvé", HttpStatus.NOT_FOUND);	
         	
         }else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "TypeCommune non trouvé");
+
+        	TypeCommunes art = optionalart.get();
+        	art.setType(con.getType());
+        	art.setCode(con.getCode());
+        	 metier.save(art);
+        	return new ResponseEntity<>(art, HttpStatus.OK);
 		}
       
 	}
@@ -82,16 +85,14 @@ Optional<TypeCommunes> optionalart = metier.findById(id);
     @RequestMapping(value= "/typecommune/{id}", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
-    public TypeCommunes getTypeCommuneById(@PathVariable("id") Long id) {
+    public  ResponseEntity<?> getTypeCommuneById(@PathVariable("id") Long id) {
 
     	Optional<TypeCommunes> optionalart = metier.findById(id);
 
-    	if (optionalart.isPresent()){
-            
-    		TypeCommunes art = optionalart.get();
-    		return art;
+    	if (optionalart== null){
+    		return new ResponseEntity<>("TypeCommune non trouvé", HttpStatus.NOT_FOUND);
     	}else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "TypeCommune non trouvé");
+    		return new ResponseEntity<>(optionalart, HttpStatus.OK);
 		}
 
     }
@@ -102,7 +103,7 @@ Optional<TypeCommunes> optionalart = metier.findById(id);
 
     	Optional<TypeCommunes> optionalart  = metier.findById(id);
 
-        if (!optionalart.isPresent()){
+        if (optionalart== null){
             return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
         }else{
 

@@ -6,6 +6,7 @@
 package com.administration.etatcivil.entities;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -25,16 +26,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author dev1202
+ * @author Utilisateur
  */
 @Entity
-@Table(name = "livraison")
+@Table(name = "livraisons")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Livraison.findAll", query = "SELECT l FROM Livraison l"),
-    @NamedQuery(name = "Livraison.findById", query = "SELECT l FROM Livraison l WHERE l.id = :id"),
-    @NamedQuery(name = "Livraison.findByDate", query = "SELECT l FROM Livraison l WHERE l.date = :date")})
-public class Livraison implements Serializable {
+    @NamedQuery(name = "Livraisons.findAll", query = "SELECT l FROM Livraisons l"),
+    @NamedQuery(name = "Livraisons.findById", query = "SELECT l FROM Livraisons l WHERE l.id = :id"),
+    @NamedQuery(name = "Livraisons.findByDate", query = "SELECT l FROM Livraisons l WHERE l.date = :date"),
+    @NamedQuery(name = "Livraisons.findByAdresse", query = "SELECT l FROM Livraisons l WHERE l.adresse = :adresse"),
+    @NamedQuery(name = "Livraisons.findByBoiteEmail", query = "SELECT l FROM Livraisons l WHERE l.boiteEmail = :boiteEmail"),
+    @NamedQuery(name = "Livraisons.findByBoitePostal", query = "SELECT l FROM Livraisons l WHERE l.boitePostal = :boitePostal"),
+    @NamedQuery(name = "Livraisons.findByIdLieu", query = "SELECT l FROM Livraisons l WHERE l.idLieu = :idLieu")})
+public class Livraisons implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -46,31 +51,34 @@ public class Livraison implements Serializable {
     @Column(name = "date")
     @Temporal(TemporalType.DATE)
     private Date date;
-    @Basic(optional = false)
+    @Column(name = "adresse")
+    private String adresse;
+    @Column(name = "boite_email")
+    private String boiteEmail;
+    @Column(name = "boite_postal")
+    private String boitePostal;
     @Lob
     @Column(name = "description")
     private String description;
+    @Column(name = "id_lieu")
+    private BigInteger idLieu;
     @JoinColumn(name = "id_mode_livraison", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private ModeLivraison idModeLivraison;
     @JoinColumn(name = "id_demande", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Demandes idDemande;
-    @JoinColumn(name = "id_lieu", referencedColumnName = "id")
-    @ManyToOne
-    private LieuLivraisons idLieu;
 
-    public Livraison() {
+    public Livraisons() {
     }
 
-    public Livraison(Long id) {
+    public Livraisons(Long id) {
         this.id = id;
     }
 
-    public Livraison(Long id, Date date, String description) {
+    public Livraisons(Long id, Date date) {
         this.id = id;
         this.date = date;
-        this.description = description;
     }
 
     public Long getId() {
@@ -89,12 +97,44 @@ public class Livraison implements Serializable {
         this.date = date;
     }
 
+    public String getAdresse() {
+        return adresse;
+    }
+
+    public void setAdresse(String adresse) {
+        this.adresse = adresse;
+    }
+
+    public String getBoiteEmail() {
+        return boiteEmail;
+    }
+
+    public void setBoiteEmail(String boiteEmail) {
+        this.boiteEmail = boiteEmail;
+    }
+
+    public String getBoitePostal() {
+        return boitePostal;
+    }
+
+    public void setBoitePostal(String boitePostal) {
+        this.boitePostal = boitePostal;
+    }
+
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public BigInteger getIdLieu() {
+        return idLieu;
+    }
+
+    public void setIdLieu(BigInteger idLieu) {
+        this.idLieu = idLieu;
     }
 
     public ModeLivraison getIdModeLivraison() {
@@ -113,14 +153,6 @@ public class Livraison implements Serializable {
         this.idDemande = idDemande;
     }
 
-    public LieuLivraisons getIdLieu() {
-        return idLieu;
-    }
-
-    public void setIdLieu(LieuLivraisons idLieu) {
-        this.idLieu = idLieu;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -131,10 +163,10 @@ public class Livraison implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Livraison)) {
+        if (!(object instanceof Livraisons)) {
             return false;
         }
-        Livraison other = (Livraison) object;
+        Livraisons other = (Livraisons) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -143,7 +175,7 @@ public class Livraison implements Serializable {
 
     @Override
     public String toString() {
-        return "com.administration.etatcivil.entities.Livraison[ id=" + id + " ]";
+        return "com.administration.etatcivil.entities.Livraisons[ id=" + id + " ]";
     }
     
 }

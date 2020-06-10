@@ -21,11 +21,9 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 /**
  *
- * @author dev1202
+ * @author Utilisateur
  */
 @Entity
 @Table(name = "type_etatcivil")
@@ -33,6 +31,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @NamedQueries({
     @NamedQuery(name = "TypeEtatcivil.findAll", query = "SELECT t FROM TypeEtatcivil t"),
     @NamedQuery(name = "TypeEtatcivil.findById", query = "SELECT t FROM TypeEtatcivil t WHERE t.id = :id"),
+    @NamedQuery(name = "TypeEtatcivil.findByCode", query = "SELECT t FROM TypeEtatcivil t WHERE t.code = :code"),
     @NamedQuery(name = "TypeEtatcivil.findByType", query = "SELECT t FROM TypeEtatcivil t WHERE t.type = :type")})
 public class TypeEtatcivil implements Serializable {
 
@@ -43,11 +42,12 @@ public class TypeEtatcivil implements Serializable {
     @Column(name = "id")
     private Long id;
     @Basic(optional = false)
+    @Column(name = "code")
+    private String code;
+    @Basic(optional = false)
     @Column(name = "type")
     private String type;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idTypeEtatCivil")
-    
-    @JsonIgnore
     private List<EtatCivils> etatCivilsList;
 
     public TypeEtatcivil() {
@@ -57,8 +57,9 @@ public class TypeEtatcivil implements Serializable {
         this.id = id;
     }
 
-    public TypeEtatcivil(Long id, String type) {
+    public TypeEtatcivil(Long id, String code, String type) {
         this.id = id;
+        this.code = code;
         this.type = type;
     }
 
@@ -68,6 +69,14 @@ public class TypeEtatcivil implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public String getType() {
