@@ -23,6 +23,8 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author Utilisateur
@@ -50,8 +52,7 @@ public class EtatCivils implements Serializable {
     @Column(name = "libelle")
     private String libelle;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEtatCivil")
-    private List<Mariages> mariagesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEtatCivil")
+    @JsonIgnore
     private List<LieuHospitalier> lieuHospitalierList;
     @JoinColumn(name = "id_commune", referencedColumnName = "id")
     @ManyToOne(optional = false)
@@ -59,8 +60,6 @@ public class EtatCivils implements Serializable {
     @JoinColumn(name = "id_type_etat_civil", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private TypeEtatcivil idTypeEtatCivil;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEtatCivil")
-    private List<Officiers> officiersList;
 
     public EtatCivils() {
     }
@@ -100,15 +99,6 @@ public class EtatCivils implements Serializable {
     }
 
     @XmlTransient
-    public List<Mariages> getMariagesList() {
-        return mariagesList;
-    }
-
-    public void setMariagesList(List<Mariages> mariagesList) {
-        this.mariagesList = mariagesList;
-    }
-
-    @XmlTransient
     public List<LieuHospitalier> getLieuHospitalierList() {
         return lieuHospitalierList;
     }
@@ -131,15 +121,6 @@ public class EtatCivils implements Serializable {
 
     public void setIdTypeEtatCivil(TypeEtatcivil idTypeEtatCivil) {
         this.idTypeEtatCivil = idTypeEtatCivil;
-    }
-
-    @XmlTransient
-    public List<Officiers> getOfficiersList() {
-        return officiersList;
-    }
-
-    public void setOfficiersList(List<Officiers> officiersList) {
-        this.officiersList = officiersList;
     }
 
     @Override

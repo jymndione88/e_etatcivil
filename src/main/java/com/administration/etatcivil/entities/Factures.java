@@ -7,9 +7,7 @@ package com.administration.etatcivil.entities;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,12 +17,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -39,7 +35,9 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Factures.findByDate", query = "SELECT f FROM Factures f WHERE f.date = :date"),
     @NamedQuery(name = "Factures.findByMontant", query = "SELECT f FROM Factures f WHERE f.montant = :montant"),
     @NamedQuery(name = "Factures.findByRemise", query = "SELECT f FROM Factures f WHERE f.remise = :remise"),
-    @NamedQuery(name = "Factures.findByTva", query = "SELECT f FROM Factures f WHERE f.tva = :tva")})
+    @NamedQuery(name = "Factures.findByTva", query = "SELECT f FROM Factures f WHERE f.tva = :tva"),
+    @NamedQuery(name = "Factures.findByEtat", query = "SELECT f FROM Factures f WHERE f.etat = :etat"),
+    @NamedQuery(name = "Factures.findByIdEtatFacture", query = "SELECT f FROM Factures f WHERE f.idEtatFacture = :idEtatFacture")})
 public class Factures implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -58,17 +56,20 @@ public class Factures implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "remise")
     private Float remise;
-    @Basic(optional = false)
     @Column(name = "tva")
-    private float tva;
+    private Float tva;
+    @Basic(optional = false)
+    @Column(name = "etat")
+    private boolean etat;
+    @Basic(optional = false)
+    @Column(name = "id_etat_facture")
+    private long idEtatFacture;
     @JoinColumn(name = "id_demande", referencedColumnName = "id")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Demandes idDemande;
-    @JoinColumn(name = "id_etat_facture", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private EtatFactures idEtatFacture;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idFacture")
-    private List<Paiements> paiementsList;
+    @JoinColumn(name = "id_declaration", referencedColumnName = "id")
+    @ManyToOne
+    private Declarations idDeclaration;
 
     public Factures() {
     }
@@ -77,11 +78,12 @@ public class Factures implements Serializable {
         this.id = id;
     }
 
-    public Factures(Long id, Date date, double montant, float tva) {
+    public Factures(Long id, Date date, double montant, boolean etat, long idEtatFacture) {
         this.id = id;
         this.date = date;
         this.montant = montant;
-        this.tva = tva;
+        this.etat = etat;
+        this.idEtatFacture = idEtatFacture;
     }
 
     public Long getId() {
@@ -116,12 +118,28 @@ public class Factures implements Serializable {
         this.remise = remise;
     }
 
-    public float getTva() {
+    public Float getTva() {
         return tva;
     }
 
-    public void setTva(float tva) {
+    public void setTva(Float tva) {
         this.tva = tva;
+    }
+
+    public boolean getEtat() {
+        return etat;
+    }
+
+    public void setEtat(boolean etat) {
+        this.etat = etat;
+    }
+
+    public long getIdEtatFacture() {
+        return idEtatFacture;
+    }
+
+    public void setIdEtatFacture(long idEtatFacture) {
+        this.idEtatFacture = idEtatFacture;
     }
 
     public Demandes getIdDemande() {
@@ -132,21 +150,12 @@ public class Factures implements Serializable {
         this.idDemande = idDemande;
     }
 
-    public EtatFactures getIdEtatFacture() {
-        return idEtatFacture;
+    public Declarations getIdDeclaration() {
+        return idDeclaration;
     }
 
-    public void setIdEtatFacture(EtatFactures idEtatFacture) {
-        this.idEtatFacture = idEtatFacture;
-    }
-
-    @XmlTransient
-    public List<Paiements> getPaiementsList() {
-        return paiementsList;
-    }
-
-    public void setPaiementsList(List<Paiements> paiementsList) {
-        this.paiementsList = paiementsList;
+    public void setIdDeclaration(Declarations idDeclaration) {
+        this.idDeclaration = idDeclaration;
     }
 
     @Override

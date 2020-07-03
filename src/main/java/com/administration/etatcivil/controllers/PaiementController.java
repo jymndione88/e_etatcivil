@@ -23,7 +23,8 @@ import com.administration.etatcivil.entities.Paiements;
 import com.administration.etatcivil.entities.TypeEtatcivil;
 import com.administration.etatcivil.repositories.PaiementRepository;
 
-@CrossOrigin("http://localhost:4200")
+//@CrossOrigin("http://localhost:4200")
+@CrossOrigin(origins ="*", allowedHeaders = "*")
 @RequestMapping(value= "/api")
 @RestController
 public class PaiementController {
@@ -39,7 +40,7 @@ public class PaiementController {
 
     	if (con == null || con.isEmpty()){
     		//erreur 204
-            return new ResponseEntity<List<Paiements>>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<List<Paiements>>(HttpStatus.NOT_FOUND);
         }else{
 
         	return new ResponseEntity<List<Paiements>>(con, HttpStatus.OK);
@@ -49,47 +50,54 @@ public class PaiementController {
 	
     @RequestMapping(value= "/paiement", method= RequestMethod.POST)
     @ResponseBody
-	public Paiements addPaiement(@RequestBody Paiements con, HttpServletResponse response){
+	public  ResponseEntity<?> addPaiement(@RequestBody Paiements con){
 
     	//Si l'con n'existe pas déja
-    	//if(!metier.findByContenu(con.getContent()).isPresent()){
-    		//return metier.save(con);
-    	//}else {
-    	//	throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Paiement existe déjà");
-    	//}
-    	return null;
+    	if(metier.findByDate(con.getDate())!=null){
+    		 metier.save(con);
+    		 return new ResponseEntity<>(con, HttpStatus.CREATED);
+    	}else {
+    		
+    		return new ResponseEntity<>("Paiement existe déjà", HttpStatus.CONFLICT);
+    	}
+    
 	}
     
     @RequestMapping(value= "/paiement/{id}", method= RequestMethod.PUT)
     @ResponseBody
-	public Paiements updatePaiement(@PathVariable("id") Long id, @RequestBody Paiements con){
+	public ResponseEntity<?> updatePaiement(@PathVariable("id") Long id, @RequestBody Paiements con){
 
 Optional<Paiements> optionalart = metier.findById(id);
     	
-        if (optionalart.isPresent()){
-        	
-        	Paiements art = optionalart.get();
-        	art.setMontant(con.getMontant());
-        	return metier.save(art);
+        if (optionalart== null){
+          	 return new ResponseEntity<>("Paiement non trouvé", HttpStatus.NOT_FOUND);
         	
         }else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Paiement non trouvé");
+
+        	Paiements art = optionalart.get();
+        	art.setDate(con.getDate());
+        	art.setMontant(con.getMontant());
+        	art.setIdFacture(con.getIdFacture());
+        	art.setIdModePaiement(con.getIdModePaiement());
+        	 metier.save(art);
+        	 
+        	 return new ResponseEntity<>(art, HttpStatus.OK);
+        	
 		}
 	}
     
     @RequestMapping(value= "/paiement/{id}", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
-    public Paiements getPaiementById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getPaiementById(@PathVariable("id") Long id) {
 
     	Optional<Paiements> optionalart = metier.findById(id);
 
-    	if (optionalart.isPresent()){
-            
-    		Paiements art = optionalart.get();
-    		return art;
+    	if (optionalart== null){
+    		return new ResponseEntity<>("Paiement non trouvé", HttpStatus.NOT_FOUND);
+    		
     	}else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Paiement non trouvé");
+    		return new ResponseEntity<>(optionalart, HttpStatus.OK);
 		}
     }
     
@@ -99,7 +107,7 @@ Optional<Paiements> optionalart = metier.findById(id);
 
     	Optional<Paiements> optionalart  = metier.findById(id);
 
-        if (!optionalart.isPresent()){
+        if (optionalart== null){
             return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
         }else{
 

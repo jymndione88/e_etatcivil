@@ -24,7 +24,8 @@ import com.administration.etatcivil.entities.TypeEtatcivil;
 import com.administration.etatcivil.repositories.LieuHospitalierRepository;
 
 
-@CrossOrigin("http://localhost:4200")
+//@CrossOrigin("http://localhost:4200")
+@CrossOrigin(origins ="*", allowedHeaders = "*")
 @RequestMapping(value= "/api")
 @RestController
 public class LieuHospitalierController {
@@ -40,7 +41,7 @@ public class LieuHospitalierController {
 
     	if (con == null || con.isEmpty()){
     		//erreur 204
-            return new ResponseEntity<List<LieuHospitalier>>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<List<LieuHospitalier>>(HttpStatus.NOT_FOUND);
         }else{
 
         	return new ResponseEntity<List<LieuHospitalier>>(con, HttpStatus.OK);
@@ -50,48 +51,54 @@ public class LieuHospitalierController {
 	
     @RequestMapping(value= "/lieuhospitalier", method= RequestMethod.POST)
     @ResponseBody
-	public LieuHospitalier addLieuHospitalier(@RequestBody LieuHospitalier con, HttpServletResponse response){
+	public ResponseEntity<?> addLieuHospitalier(@RequestBody LieuHospitalier con){
 
     	//Si l'con n'existe pas déja
-    	//if(!metier.findByNumero(con.getCode()).isPresent()){
-    		//return metier.save(con);
-    	//}else {
-    		//throw new ResponseStatusException(HttpStatus.FORBIDDEN, "LieuHospitalier existe déjà");
-    	//}
-    	return null;
+    	if(metier.findByCode(con.getCode())!= null){
+    		 metier.save(con);
+    		 return new ResponseEntity<>(con, HttpStatus.CREATED);
+    	}else {
+    		
+    		return new ResponseEntity<>("LieuHospitalier existe déjà", HttpStatus.CONFLICT);
+    	}
+    	
 	}
     
     @RequestMapping(value= "/lieuhospitalier/{id}", method= RequestMethod.PUT)
     @ResponseBody
-	public LieuHospitalier updateLieuHospitalier(@PathVariable("id") Long id, @RequestBody LieuHospitalier con){
+	public ResponseEntity<?> updateLieuHospitalier(@PathVariable("id") Long id, @RequestBody LieuHospitalier con){
 
 Optional<LieuHospitalier> optionalart = metier.findById(id);
     	
-        if (optionalart.isPresent()){
+        if (optionalart== null){
+          	 return new ResponseEntity<>("LieuHospitalier non trouvé", HttpStatus.NOT_FOUND);
         	
-        	LieuHospitalier art = optionalart.get();
-        	art.setCode(con.getCode());
-        	return metier.save(art);
         	
         }else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "LieuHospitalier non trouvé");
+        	LieuHospitalier art = optionalart.get();
+        	art.setCode(con.getCode());
+        	art.setLibelle(con.getLibelle());
+        	art.setIdEtatCivil(con.getIdEtatCivil());
+        	
+        	 metier.save(art);
+        	 return new ResponseEntity<>(art, HttpStatus.OK);
+        	
 		}
 	}
     
     @RequestMapping(value= "/lieuhospitalier/{id}", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
-    public LieuHospitalier getLieuHospitalierById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getLieuHospitalierById(@PathVariable("id") Long id) {
 
     	Optional<LieuHospitalier> optionalart = metier.findById(id);
 
-    	if (optionalart.isPresent()){
-            
-    		LieuHospitalier art = optionalart.get();
-    		return art;
+    	if (optionalart== null){
+    		return new ResponseEntity<>("LieuHospitalier non trouvé", HttpStatus.NOT_FOUND);
     	}else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "LieuHospitalier non trouvé");
-		}
+		
+			return new ResponseEntity<>(optionalart, HttpStatus.OK);
+    	}
 
     }
     
@@ -102,7 +109,7 @@ Optional<LieuHospitalier> optionalart = metier.findById(id);
 
     	Optional<LieuHospitalier> optionalart  = metier.findById(id);
 
-        if (!optionalart.isPresent()){
+        if (optionalart== null){
             return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
         }else{
 

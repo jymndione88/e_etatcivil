@@ -23,7 +23,8 @@ import com.administration.etatcivil.entities.Livraisons;
 import com.administration.etatcivil.entities.TypeEtatcivil;
 import com.administration.etatcivil.repositories.LivraisonRepository;
 
-@CrossOrigin("http://localhost:4200")
+//@CrossOrigin("http://localhost:4200")
+@CrossOrigin(origins ="*", allowedHeaders = "*")
 @RequestMapping(value= "/api")
 @RestController
 public class LivraisonController {
@@ -39,7 +40,7 @@ public class LivraisonController {
 
     	if (con == null || con.isEmpty()){
     		//erreur 204
-            return new ResponseEntity<List<Livraisons>>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<List<Livraisons>>(HttpStatus.NOT_FOUND);
         }else{
         	return new ResponseEntity<List<Livraisons>>(con, HttpStatus.OK);
         }
@@ -49,31 +50,43 @@ public class LivraisonController {
 	
     @RequestMapping(value= "/livraison", method= RequestMethod.POST)
     @ResponseBody
-	public Livraisons addLivraison(@RequestBody Livraisons con, HttpServletResponse response){
+	public ResponseEntity<?> addLivraison(@RequestBody Livraisons con){
 
     	//Si l'con n'existe pas déja
-    	//if(!metier.findByNumero(con.getDescription()).isPresent()){
-    		//return metier.save(con);
-    	//}else {
-    		//throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Livraison existe déjà");
-    	//}
-    	return null;
+    	if(metier.findByDate(con.getDate())!=null){
+    		 metier.save(con);
+    		 return new ResponseEntity<>(con, HttpStatus.CREATED);
+    	}else {
+    		
+    		return new ResponseEntity<>("Livraison existe déjà", HttpStatus.CONFLICT);
+    	}
+    	
 	}
     
     @RequestMapping(value= "/livraison/{id}", method= RequestMethod.PUT)
     @ResponseBody
-	public Livraisons updateLivraison(@PathVariable("id") Long id, @RequestBody Livraisons con){
+	public ResponseEntity<?> updateLivraison(@PathVariable("id") Long id, @RequestBody Livraisons con){
 
 Optional<Livraisons> optionalart = metier.findById(id);
     	
-        if (optionalart.isPresent()){
-        	
-        	Livraisons art = optionalart.get();
-        	art.setDate(con.getDate());
-        	return metier.save(art);
+        if (optionalart== null){
+          	 return new ResponseEntity<>("Livraison non trouvé", HttpStatus.NOT_FOUND);
         	
         }else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Livraison non trouvé");
+
+        	Livraisons art = optionalart.get();
+        	art.setDate(con.getDate());
+        	art.setAdresse(con.getAdresse());
+        	art.setBoiteEmail(con.getBoiteEmail());
+        	art.setBoitePostal(con.getBoitePostal());
+        	art.setDescription(con.getDescription());
+        	//art.setPays(con.getPays());
+        	art.setIdDemande(con.getIdDemande());
+        	art.setIdModeLivraison(con.getIdModeLivraison());
+        	 metier.save(art);
+        	 
+        	 return new ResponseEntity<>(art, HttpStatus.OK);
+        	
 		}
 
 	}
@@ -81,16 +94,15 @@ Optional<Livraisons> optionalart = metier.findById(id);
     @RequestMapping(value= "/livraison/{id}", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
-    public Livraisons getLivraisonById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getLivraisonById(@PathVariable("id") Long id) {
 
     	Optional<Livraisons> optionalart = metier.findById(id);
 
-    	if (optionalart.isPresent()){
-            
-    		Livraisons art = optionalart.get();
-    		return art;
+    	if (optionalart== null){
+    		return new ResponseEntity<>("Livraison non trouvé", HttpStatus.NOT_FOUND);
+    		
     	}else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Livraison non trouvé");
+    		return new ResponseEntity<>(optionalart, HttpStatus.OK);
 		}
     }
     
@@ -100,7 +112,7 @@ Optional<Livraisons> optionalart = metier.findById(id);
 
     	Optional<Livraisons> optionalart  = metier.findById(id);
 
-        if (!optionalart.isPresent()){
+        if (optionalart== null){
             return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
         }else{
 

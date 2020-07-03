@@ -24,7 +24,8 @@ import com.administration.etatcivil.entities.TypeEtatcivil;
 import com.administration.etatcivil.repositories.CommuneRepository;
 
 
-@CrossOrigin("http://localhost:4200")
+//@CrossOrigin("http://localhost:4200")
+@CrossOrigin(origins ="*", allowedHeaders = "*")
 @RequestMapping(value= "/api")
 @RestController
 public class CommuneController {
@@ -41,7 +42,7 @@ public class CommuneController {
 	
     	if (communes == null || communes.isEmpty()){
     		//erreur 204
-            return new ResponseEntity<List<Communes>>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<List<Communes>>(HttpStatus.NOT_FOUND);
         }else{
         	return new ResponseEntity<List<Communes>>(communes, HttpStatus.OK);
         }
@@ -51,47 +52,54 @@ public class CommuneController {
 	
     @RequestMapping(value= "/commune", method= RequestMethod.POST)
     @ResponseBody
-	public Communes addCommune(@RequestBody Communes com, HttpServletResponse response){
+	public ResponseEntity<?>  addCommune(@RequestBody Communes com){
 
     	//Si l'com n'existe pas déja
-    	//if(!metier.findByNumero(com.getCode()).isPresent()){
-    		//return metier.save(com);
-    	//}else {
-    		//throw new ResponseStatusException(HttpStatus.FORBIDDEN, "commune existe déjà");
-    	//}
-    	return null;
+    	if(metier.findByCode(com.getCode())!= null){
+    		 metier.save(com);
+    		 return new ResponseEntity<>(com, HttpStatus.CREATED);
+    	}else {
+    		
+    		return new ResponseEntity<>("commune existe déjà", HttpStatus.CONFLICT);
+    	}
+    	
 	}
     
     @RequestMapping(value= "/commune/{id}", method= RequestMethod.PUT)
     @ResponseBody
-	public Communes updateCommune(@PathVariable("id") Long id, @RequestBody Communes com){
+	public ResponseEntity<?> updateCommune(@PathVariable("id") Long id, @RequestBody Communes com){
 
     	Optional<Communes> optionalart = metier.findById(id);
     	
-        if (optionalart.isPresent()){
-        	
-        	Communes art = optionalart.get();
-        	//art.setLibelle(com.getLibelle());
-        	return metier.save(art);
+        if (optionalart== null){
+          	 return new ResponseEntity<>("commune non trouvé", HttpStatus.NOT_FOUND);
         	
         }else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "commune non trouvé");
+
+        	Communes art = optionalart.get();
+        	art.setCode(com.getCode());
+        	art.setLibelle(com.getLibelle());
+        	art.setIdArrondissement(com.getIdArrondissement());
+        	art.setIdTypeCommune(com.getIdTypeCommune());
+        	
+        	 metier.save(art);
+        	 return new ResponseEntity<>(art, HttpStatus.OK);
+        	
 		}
 	}
     
     @RequestMapping(value= "/commune/{id}", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
-    public Communes getCommuneById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getCommuneById(@PathVariable("id") Long id) {
 
     	Optional<Communes> optionalart = metier.findById(id);
 
-    	if (optionalart.isPresent()){
+    	if (optionalart== null){
+    		return new ResponseEntity<>("commune non trouvé", HttpStatus.NOT_FOUND);
             
-    		Communes art = optionalart.get();
-    		return art;
     	}else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "commune non trouvé");
+    		return new ResponseEntity<>(optionalart, HttpStatus.OK);
 		}
       
     }
@@ -102,7 +110,7 @@ public class CommuneController {
 
     	Optional<Communes> optionalart  = metier.findById(id);
 
-        if (!optionalart.isPresent()){
+        if (optionalart== null){
             return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
         }else{
 

@@ -10,9 +10,11 @@ import com.administration.etatcivil.entities.Regions;
 
 public interface RegionRepository extends JpaRepository<Regions, Long> {
 
+	 @Query("SELECT b FROM Regions b WHERE b.code = ?1")
+	 Optional<Regions> findByCode(String code);
+	
 	//Optional<Regions> findByNumero(String numero);
 	
 	 // @Query("SELECT u FROM User u WHERE u.status = ?1 and u.name = ?2") 
-	 //@Query("SELECT b FROM Bien b WHERE b.bien.id = ?1")
-	 //List<Arrondissements> findByTypeBien(Integer type_bien_id);
+	
 }

@@ -22,6 +22,8 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author Utilisateur
@@ -49,6 +51,7 @@ public class LieuHospitalier implements Serializable {
     @Column(name = "libelle")
     private String libelle;
     @OneToMany(mappedBy = "idLieuHospitalier")
+    @JsonIgnore
     private List<Deces> decesList;
     @JoinColumn(name = "id_etat_civil", referencedColumnName = "id")
     @ManyToOne(optional = false)

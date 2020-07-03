@@ -18,11 +18,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.administration.etatcivil.entities.Mariages;
 import com.administration.etatcivil.entities.Naissances;
 import com.administration.etatcivil.repositories.NaissanceRepository;
 
 
-@CrossOrigin("http://localhost:4200")
+//@CrossOrigin("http://localhost:4200")
+@CrossOrigin(origins ="*", allowedHeaders = "*")
 @RequestMapping(value= "/api")
 @RestController
 public class NaissanceController {
@@ -50,10 +52,13 @@ public class NaissanceController {
     @RequestMapping(value= "/naissance", method= RequestMethod.POST)
 	public ResponseEntity<?> addNaissance(@RequestBody Naissances con){
     	
+    	 metier.save(con);
+ 		return new ResponseEntity<>(con, HttpStatus.CREATED);
+ 		
     	//Si l'con n'existe pas déja
     	// if(metier.findByCode(con.getCode())!= null){
-    		 metier.save(con);
-    		return new ResponseEntity<>(con, HttpStatus.CREATED);
+    		// metier.save(con);
+    		//return new ResponseEntity<>(con, HttpStatus.CREATED);
     	//}else {
     	//	return new ResponseEntity<>("Naissance existe déjà", HttpStatus.CONFLICT);
     	//}
@@ -70,8 +75,21 @@ Optional<Naissances> optionalart = metier.findById(id);
         	
         }else { 
         	Naissances art = optionalart.get();
-        	//art.setCode(con.getCode());
-        	//art.setType(con.getType());
+        	art.setGenre(con.getGenre());
+        	art.setNom(con.getNom());  	
+        	art.setPrenom(con.getPrenom());
+        	art.setDatenaiss(con.getDatenaiss());
+        	art.setLieunaiss(con.getLieunaiss());
+        	art.setHeurenaiss(con.getHeurenaiss());
+        	art.setNomPere(con.getNomPere());
+        	art.setPrenomPere(con.getPrenomPere());
+        	art.setNomMere(con.getNomMere());
+        	art.setPrenomMere(con.getPrenomMere());
+        	art.setMentionMarginal(con.getMentionMarginal());
+        	
+        	art.setIdJugement(con.getIdJugement());
+        	art.setIdDeclaration(con.getIdDeclaration());
+        	
         	metier.save(art);
         	
         	return new ResponseEntity<>(art, HttpStatus.OK);
@@ -93,6 +111,22 @@ Optional<Naissances> optionalart = metier.findById(id);
     		return new ResponseEntity<>(optionalart, HttpStatus.OK);
 		}
         
+    }
+    
+    @RequestMapping(value= "/naissance/{id}/{num}", method= RequestMethod.GET,
+    		headers={"Accept=application/json"})
+    @ResponseBody
+    public ResponseEntity<?> getnaissanceByDeclaration(@PathVariable("id") Long id, @PathVariable("num") Long num) {
+
+    	Optional<Naissances> optionalart = metier.findByDeclaration(num);
+    	
+    	if (optionalart== null){
+    		return new ResponseEntity<>("naissance non trouvé", HttpStatus.NOT_FOUND);
+ 
+    	}else { 
+    		return new ResponseEntity<>(optionalart, HttpStatus.OK);
+		}
+
     }
     
     @RequestMapping(value= "/naissance/{id}", method= RequestMethod.DELETE)

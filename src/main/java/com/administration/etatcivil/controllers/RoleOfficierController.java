@@ -23,7 +23,8 @@ import com.administration.etatcivil.entities.RoleOfficiers;
 import com.administration.etatcivil.entities.TypeEtatcivil;
 import com.administration.etatcivil.repositories.RoleOfficierRepository;
 
-@CrossOrigin("http://localhost:4200")
+//@CrossOrigin("http://localhost:4200")
+@CrossOrigin(origins ="*", allowedHeaders = "*")
 @RequestMapping(value= "/api")
 @RestController
 public class RoleOfficierController {
@@ -39,7 +40,7 @@ public class RoleOfficierController {
 
     	if (con == null || con.isEmpty()){
     		//erreur 204
-            return new ResponseEntity<List<RoleOfficiers>>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<List<RoleOfficiers>>(HttpStatus.NOT_FOUND);
         }else{
         	
         	return new ResponseEntity<List<RoleOfficiers>>(con, HttpStatus.OK);
@@ -50,31 +51,35 @@ public class RoleOfficierController {
 	
     @RequestMapping(value= "/roleofficier", method= RequestMethod.POST)
     @ResponseBody
-	public RoleOfficiers addRoleOfficier(@RequestBody RoleOfficiers con, HttpServletResponse response){
+	public ResponseEntity<?> addRoleOfficier(@RequestBody RoleOfficiers con){
 
     	//Si l'con n'existe pas déja
-    	//if(!metier.findByNumero(con.getRole()).isPresent()){
-    		//return metier.save(con);
-    	//}else {
-    		//throw new ResponseStatusException(HttpStatus.FORBIDDEN, "RoleOfficier existe déjà");
-    	//}
-    	return null;
+    	if(metier.findByRole(con.getRole())!= null){
+    		 metier.save(con);
+    	 	return new ResponseEntity<>(con, HttpStatus.CREATED);
+    	}else {
+    		
+    		return new ResponseEntity<>("RoleOfficier existe déjà", HttpStatus.CONFLICT);
+    	}
+    	
 	}
     
     @RequestMapping(value= "/roleofficier/{id}", method= RequestMethod.PUT)
     @ResponseBody
-	public RoleOfficiers updateRoleOfficier(@PathVariable("id") Long id, @RequestBody RoleOfficiers con){
+	public ResponseEntity<?> updateRoleOfficier(@PathVariable("id") Long id, @RequestBody RoleOfficiers con){
 
 Optional<RoleOfficiers> optionalart = metier.findById(id);
     	
-        if (optionalart.isPresent()){
-        	
-        	RoleOfficiers art = optionalart.get();
-        	art.setRole(con.getRole());
-        	return metier.save(art);
+        if (optionalart== null){
+          	 return new ResponseEntity<>("RoleOfficier non trouvé", HttpStatus.NOT_FOUND);
         	
         }else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "RoleOfficier non trouvé");
+		
+        	RoleOfficiers art = optionalart.get();
+        	art.setRole(con.getRole());
+        	 metier.save(art);
+        	return new ResponseEntity<>(art, HttpStatus.OK);
+        	
 		}
        
 	}
@@ -82,16 +87,14 @@ Optional<RoleOfficiers> optionalart = metier.findById(id);
     @RequestMapping(value= "/roleofficier/{id}", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
-    public RoleOfficiers getRoleOfficierById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getRoleOfficierById(@PathVariable("id") Long id) {
 
     	Optional<RoleOfficiers> optionalart = metier.findById(id);
 
-    	if (optionalart.isPresent()){
-            
-    		RoleOfficiers art = optionalart.get();
-    		return art;
+    	if (optionalart== null){
+    		return new ResponseEntity<>("RoleOfficier non trouvé", HttpStatus.NOT_FOUND);
     	}else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "RoleOfficier non trouvé");
+    		return new ResponseEntity<>(optionalart, HttpStatus.OK);
 		}
 
     }
@@ -102,7 +105,7 @@ Optional<RoleOfficiers> optionalart = metier.findById(id);
 
     	Optional<RoleOfficiers> optionalart  = metier.findById(id);
 
-        if (!optionalart.isPresent()){
+        if (optionalart== null){
             return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
         }else{
 

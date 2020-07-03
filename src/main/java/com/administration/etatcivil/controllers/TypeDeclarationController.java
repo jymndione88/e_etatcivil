@@ -22,7 +22,8 @@ import com.administration.etatcivil.entities.TypeDeclarations;
 import com.administration.etatcivil.repositories.TypeDeclarationRepository;
 
 
-@CrossOrigin("http://localhost:4200")
+//@CrossOrigin("http://localhost:4200")
+@CrossOrigin(origins ="*", allowedHeaders = "*")
 @RequestMapping(value= "/api")
 @RestController
 public class TypeDeclarationController {

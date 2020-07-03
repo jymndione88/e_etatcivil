@@ -1,5 +1,8 @@
 package com.administration.etatcivil.controllers;
 
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,10 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.administration.etatcivil.entities.Deces;
+import com.administration.etatcivil.entities.Mariages;
 import com.administration.etatcivil.repositories.DecesRepository;
 
 
-@CrossOrigin("http://localhost:4200")
+//@CrossOrigin("http://localhost:4200")
+@CrossOrigin(origins ="*", allowedHeaders = "*")
 @RequestMapping(value= "/api")
 @RestController
 public class DecesController {
@@ -49,13 +54,27 @@ public class DecesController {
 	
     @RequestMapping(value= "/deces", method= RequestMethod.POST)
 	public ResponseEntity<?> addDeces(@RequestBody Deces con){
+    
+    	Time t= null;
+    	try {
+    		DateFormat d= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        	String st= d.format(con.getHeureDeces());
+        	 t= new Time(d.parse(st).getTime());
+        	
+		} catch (Exception e) {
+			System.out.println("erreur convert: " + e.getMessage());
+		}
     	
+    	con.setHeureDeces(t);
+    	 metier.save(con);
+ 		return new ResponseEntity<>(con, HttpStatus.CREATED);
+ 		
     	//Si l'con n'existe pas déja
     	//if(metier.findByCode(con.getCode())!= null){
-    		 metier.save(con);
-    		return new ResponseEntity<>(con, HttpStatus.CREATED);
-    //	}else {
-    	//	return new ResponseEntity<>("Deces existe déjà", HttpStatus.CONFLICT);
+    		// metier.save(con);
+    		//return new ResponseEntity<>(con, HttpStatus.CREATED);
+    	//}else {
+    		//return new ResponseEntity<>("Deces existe déjà", HttpStatus.CONFLICT);
     	//}
     	
 	}
@@ -70,8 +89,27 @@ Optional<Deces> optionalart = metier.findById(id);
         	
         }else { 
         	Deces art = optionalart.get();
-        	//art.setCode(con.getCode());
-        	//art.setType(con.getType());
+        	art.setNomMedecin(con.getNomMedecin());
+        	art.setNomMort(con.getMotif());
+        	art.setPrenomMort(con.getPrenomMort());
+        	art.setDatenaiss(con.getDatenaiss());
+        	art.setLieunaiss(con.getLieunaiss());;
+        	art.setDateDeces(con.getDateDeces());
+       
+        	Time t= null;
+        	try {
+        		DateFormat d= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            	String st= d.format(con.getHeureDeces());
+            	 t= new Time(d.parse(st).getTime());
+            	
+    		} catch (Exception e) {
+    			System.out.println("erreur convertion: " + e.getMessage());
+    		}
+        	
+        	art.setHeureDeces(t);
+        	art.setMotif(con.getMotif());
+        	art.setIdDeclaration(con.getIdDeclaration());
+        	art.setIdLieuHospitalier(con.getIdLieuHospitalier());
         	metier.save(art);
         	
         	return new ResponseEntity<>(art, HttpStatus.OK);
@@ -83,7 +121,7 @@ Optional<Deces> optionalart = metier.findById(id);
     @RequestMapping(value= "/deces/{id}", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
-    public ResponseEntity<?> getTypeDecesById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getDecesById(@PathVariable("id") Long id) {
 
     	Optional<Deces> optionalart = metier.findById(id);
 
@@ -94,6 +132,23 @@ Optional<Deces> optionalart = metier.findById(id);
 		}
         
     }
+    
+    @RequestMapping(value= "/deces/{id}/{num}", method= RequestMethod.GET,
+    		headers={"Accept=application/json"})
+    @ResponseBody
+    public ResponseEntity<?> getdecesByDeclaration(@PathVariable("id") Long id, @PathVariable("num") Long num) {
+
+    	Optional<Deces> optionalart = metier.findByDeclaration(num);
+
+    	if (optionalart== null){
+    		return new ResponseEntity<>("deces non trouvé", HttpStatus.NOT_FOUND);
+ 
+    	}else { 
+    		return new ResponseEntity<>(optionalart, HttpStatus.OK);
+		}
+
+    }
+  
     
     @RequestMapping(value= "/deces/{id}", method= RequestMethod.DELETE)
     @ResponseBody

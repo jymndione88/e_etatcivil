@@ -8,14 +8,11 @@ package com.administration.etatcivil.entities;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -34,7 +31,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Officiers.findAll", query = "SELECT o FROM Officiers o"),
-    @NamedQuery(name = "Officiers.findById", query = "SELECT o FROM Officiers o WHERE o.id = :id")})
+    @NamedQuery(name = "Officiers.findById", query = "SELECT o FROM Officiers o WHERE o.id = :id"),
+    @NamedQuery(name = "Officiers.findByIdInternaute", query = "SELECT o FROM Officiers o WHERE o.idInternaute = :idInternaute"),
+    @NamedQuery(name = "Officiers.findByIdEtatCivil", query = "SELECT o FROM Officiers o WHERE o.idEtatCivil = :idEtatCivil"),
+    @NamedQuery(name = "Officiers.findByIdRoleOfficier", query = "SELECT o FROM Officiers o WHERE o.idRoleOfficier = :idRoleOfficier")})
 public class Officiers implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -43,18 +43,18 @@ public class Officiers implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idOfficier")
+    @Basic(optional = false)
+    @Column(name = "id_internaute")
+    private long idInternaute;
+    @Basic(optional = false)
+    @Column(name = "id_etat_civil")
+    private long idEtatCivil;
+    @Basic(optional = false)
+    @Column(name = "id_role_officier")
+    private long idRoleOfficier;
+    @OneToMany(mappedBy = "idOfficier")
     @JsonIgnore
-    private List<Mariages> mariagesList;
-    @JoinColumn(name = "id_role_officier", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private RoleOfficiers idRoleOfficier;
-    @JoinColumn(name = "id_etat_civil", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private EtatCivils idEtatCivil;
-    @JoinColumn(name = "id_internaute", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Internautes idInternaute;
+    private List<Demandes> demandesList;
     @OneToMany(mappedBy = "idOfficier")
     @JsonIgnore
     private List<Declarations> declarationsList;
@@ -66,6 +66,13 @@ public class Officiers implements Serializable {
         this.id = id;
     }
 
+    public Officiers(Long id, long idInternaute, long idEtatCivil, long idRoleOfficier) {
+        this.id = id;
+        this.idInternaute = idInternaute;
+        this.idEtatCivil = idEtatCivil;
+        this.idRoleOfficier = idRoleOfficier;
+    }
+
     public Long getId() {
         return id;
     }
@@ -74,37 +81,37 @@ public class Officiers implements Serializable {
         this.id = id;
     }
 
-    @XmlTransient
-    public List<Mariages> getMariagesList() {
-        return mariagesList;
-    }
-
-    public void setMariagesList(List<Mariages> mariagesList) {
-        this.mariagesList = mariagesList;
-    }
-
-    public RoleOfficiers getIdRoleOfficier() {
-        return idRoleOfficier;
-    }
-
-    public void setIdRoleOfficier(RoleOfficiers idRoleOfficier) {
-        this.idRoleOfficier = idRoleOfficier;
-    }
-
-    public EtatCivils getIdEtatCivil() {
-        return idEtatCivil;
-    }
-
-    public void setIdEtatCivil(EtatCivils idEtatCivil) {
-        this.idEtatCivil = idEtatCivil;
-    }
-
-    public Internautes getIdInternaute() {
+    public long getIdInternaute() {
         return idInternaute;
     }
 
-    public void setIdInternaute(Internautes idInternaute) {
+    public void setIdInternaute(long idInternaute) {
         this.idInternaute = idInternaute;
+    }
+
+    public long getIdEtatCivil() {
+        return idEtatCivil;
+    }
+
+    public void setIdEtatCivil(long idEtatCivil) {
+        this.idEtatCivil = idEtatCivil;
+    }
+
+    public long getIdRoleOfficier() {
+        return idRoleOfficier;
+    }
+
+    public void setIdRoleOfficier(long idRoleOfficier) {
+        this.idRoleOfficier = idRoleOfficier;
+    }
+
+    @XmlTransient
+    public List<Demandes> getDemandesList() {
+        return demandesList;
+    }
+
+    public void setDemandesList(List<Demandes> demandesList) {
+        this.demandesList = demandesList;
     }
 
     @XmlTransient

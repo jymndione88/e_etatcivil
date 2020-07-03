@@ -1,5 +1,6 @@
 package com.administration.etatcivil.repositories;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,9 +8,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.administration.etatcivil.entities.Livraisons;
+import com.administration.etatcivil.entities.Paiements;
 
 public interface LivraisonRepository extends JpaRepository<Livraisons, Long> {
 
+	@Query("SELECT b FROM Livraisons b WHERE b.date = ?1")
+	Optional<Livraisons> findByDate(Date date);
+	
 	//Optional<Livraison> findByNumero(String numero);
 	
 	 // @Query("SELECT u FROM User u WHERE u.status = ?1 and u.name = ?2") 

@@ -65,7 +65,7 @@ public class Personnes implements Serializable {
     @Column(name = "lieunaiss")
     private String lieunaiss;
     @Column(name = "tel")
-    private String tel;
+    private Integer tel;
     @Basic(optional = false)
     @Column(name = "adresse")
     private String adresse;
@@ -75,9 +75,6 @@ public class Personnes implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPersonne")
     @JsonIgnore
     private List<Internautes> internautesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPersonne")
-    @JsonIgnore
-    private List<Parents> parentsList;
 
     public Personnes() {
     }
@@ -136,11 +133,11 @@ public class Personnes implements Serializable {
         this.lieunaiss = lieunaiss;
     }
 
-    public String getTel() {
+    public Integer getTel() {
         return tel;
     }
 
-    public void setTel(String tel) {
+    public void setTel(Integer tel) {
         this.tel = tel;
     }
 
@@ -167,15 +164,6 @@ public class Personnes implements Serializable {
 
     public void setInternautesList(List<Internautes> internautesList) {
         this.internautesList = internautesList;
-    }
-
-    @XmlTransient
-    public List<Parents> getParentsList() {
-        return parentsList;
-    }
-
-    public void setParentsList(List<Parents> parentsList) {
-        this.parentsList = parentsList;
     }
 
     @Override

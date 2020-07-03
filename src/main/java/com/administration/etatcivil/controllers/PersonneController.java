@@ -24,7 +24,8 @@ import com.administration.etatcivil.entities.TypeEtatcivil;
 import com.administration.etatcivil.repositories.PersonneRepository;
 
 
-@CrossOrigin("http://localhost:4200")
+//@CrossOrigin("http://localhost:4200")
+@CrossOrigin(origins ="*", allowedHeaders = "*")
 @RequestMapping(value= "/api")
 @RestController
 public class PersonneController {

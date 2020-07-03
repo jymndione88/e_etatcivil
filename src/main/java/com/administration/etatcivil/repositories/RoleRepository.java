@@ -7,11 +7,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.administration.etatcivil.entities.Roles;
+import com.administration.etatcivil.security.NomsRole;
 
 public interface RoleRepository extends JpaRepository<Roles, Long> {
 
-	
-	 // @Query("SELECT u FROM User u WHERE u.status = ?1 and u.name = ?2") 
-	 //@Query("SELECT b FROM Bien b WHERE b.bien.id = ?1")
-	 //List<Arrondissements> findByTypeBien(Integer type_bien_id);
+	 @Query("SELECT b FROM Roles b WHERE b.libelle = :nom")
+	 Optional<Roles> findByName(String nom);
 }

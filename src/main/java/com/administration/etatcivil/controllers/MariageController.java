@@ -24,7 +24,8 @@ import com.administration.etatcivil.entities.TypeEtatcivil;
 import com.administration.etatcivil.repositories.MariageRepository;
 
 
-@CrossOrigin("http://localhost:4200")
+//@CrossOrigin("http://localhost:4200")
+@CrossOrigin(origins ="*", allowedHeaders = "*")
 @RequestMapping(value= "/api")
 @RestController
 public class MariageController {
@@ -40,7 +41,7 @@ public class MariageController {
 
     	if (con == null || con.isEmpty()){
     		//erreur 204
-            return new ResponseEntity<List<Mariages>>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<List<Mariages>>(HttpStatus.NOT_FOUND);
         }else{
         	return new ResponseEntity<List<Mariages>>(con, HttpStatus.OK);
         }
@@ -50,31 +51,60 @@ public class MariageController {
 	
     @RequestMapping(value= "/mariage", method= RequestMethod.POST)
     @ResponseBody
-	public Mariages addMariage(@RequestBody Mariages con, HttpServletResponse response){
+	public ResponseEntity<?> addMariage(@RequestBody Mariages con){
     	
+    	metier.save(con);
+ 		return new ResponseEntity<>(con, HttpStatus.CREATED);
+ 		
     	//Si l'con n'existe pas déja
-    	//if(!metier.findByNumero(con.getRegim()).isPresent()){
-    		//return metier.save(con);
+    	// if(metier.findByCode(con.getCode())!= null){
+    		// metier.save(con);
+    		//return new ResponseEntity<>(con, HttpStatus.CREATED);
     	//}else {
-    		//throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Mariage existe déjà");
+    	//	return new ResponseEntity<>("Mariage existe déjà", HttpStatus.CONFLICT);
     	//}
-    	return null;
+    	
 	}
     
     @RequestMapping(value= "/mariage/{id}", method= RequestMethod.PUT)
     @ResponseBody
-	public Mariages updateMariage(@PathVariable("id") Long id, @RequestBody Mariages con){
+	public ResponseEntity<?> updateMariage(@PathVariable("id") Long id, @RequestBody Mariages con){
     	
 Optional<Mariages> optionalart = metier.findById(id);
     	
-        if (optionalart.isPresent()){
-        	
-        	Mariages art = optionalart.get();
-        	//art.setRegim(con.getRegim());
-        	return metier.save(art);
+        if (optionalart== null){
+          	 return new ResponseEntity<>("Mariage non trouvé", HttpStatus.NOT_FOUND);
         	
         }else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Mariage non trouvé");
+        	Mariages art = optionalart.get();
+        	art.setDate(con.getDate());
+        	art.setNumero(con.getNumero());
+        	art.setType(con.getType());     	
+        	art.setRegime(con.getRegime());
+        	art.setContrat(con.getContrat());
+        	art.setNomConjoint(con.getNomConjoint());	
+        	art.setPrenomConjoint(con.getPrenomConjoint());
+        	art.setNomConjointe(con.getNomConjointe());
+        	art.setPrenomConjointe(con.getPrenomConjointe());
+        	art.setDatenaissConjoint(con.getDatenaissConjoint());
+        	art.setLieunaissConjoint(con.getLieunaissConjoint());
+        	art.setProfessionConjoint(con.getProfessionConjoint());
+        	art.setDatenaissConjointe(con.getDatenaissConjointe());
+        	art.setLieunaissConjointe(con.getLieunaissConjointe());
+        	art.setProfessionConjointe(con.getProfessionConjointe());      	
+        	art.setNomPereConjoint(con.getNomPereConjoint());
+        	art.setNomMereConjoint(con.getNomMereConjoint());
+        	art.setAdressParentConjoint(con.getAdressParentConjoint());        	
+        	art.setNomPereConjointe(con.getNomPereConjointe());
+        	art.setNomMereConjointe(con.getNomMereConjointe());
+        	art.setAdressParentConjointe(con.getAdressParentConjointe());
+        	
+        	art.setIdEtatCivil(con.getIdEtatCivil());
+        	art.setIdOfficier(con.getIdOfficier());
+        	
+        	 metier.save(art);
+        	 return new ResponseEntity<>(art, HttpStatus.OK);
+        	
 		}
         
 	}
@@ -82,16 +112,31 @@ Optional<Mariages> optionalart = metier.findById(id);
     @RequestMapping(value= "/mariage/{id}", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
-    public Mariages getMariageById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getMariageById(@PathVariable("id") Long id) {
 
     	Optional<Mariages> optionalart = metier.findById(id);
 
-    	if (optionalart.isPresent()){
-            
-    		Mariages art = optionalart.get();
-    		return art;
+    	if (optionalart== null){
+    		return new ResponseEntity<>("Mariage non trouvé", HttpStatus.NOT_FOUND);
+ 
     	}else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Mariage non trouvé");
+    		return new ResponseEntity<>(optionalart, HttpStatus.OK);
+		}
+
+    }
+    
+    @RequestMapping(value= "/mariage/{id}/{num}", method= RequestMethod.GET,
+    		headers={"Accept=application/json"})
+    @ResponseBody
+    public ResponseEntity<?> getMariageByDeclaration(@PathVariable("id") Long id, @PathVariable("num") String num) {
+
+    	Optional<Mariages> optionalart = metier.findByDeclaration(num);
+    	
+    	if (optionalart== null){
+    		return new ResponseEntity<>("Mariage non trouvé", HttpStatus.NOT_FOUND);
+ 
+    	}else { 
+    		return new ResponseEntity<>(optionalart, HttpStatus.OK);
 		}
 
     }
@@ -102,7 +147,7 @@ Optional<Mariages> optionalart = metier.findById(id);
 
     	Optional<Mariages> optionalart  = metier.findById(id);
 
-        if (!optionalart.isPresent()){
+        if (optionalart== null){
             return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
         }else{
 

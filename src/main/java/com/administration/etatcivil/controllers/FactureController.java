@@ -24,7 +24,8 @@ import com.administration.etatcivil.entities.TypeEtatcivil;
 import com.administration.etatcivil.repositories.FactureRepository;
 
 
-@CrossOrigin("http://localhost:4200")
+//@CrossOrigin("http://localhost:4200")
+@CrossOrigin(origins ="*", allowedHeaders = "*")
 @RequestMapping(value= "/api")
 @RestController
 public class FactureController {
@@ -40,7 +41,7 @@ public class FactureController {
 
     	if (con == null || con.isEmpty()){
     		//erreur 204
-            return new ResponseEntity<List<Factures>>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<List<Factures>>(HttpStatus.NOT_FOUND);
         }else{
 
         	return new ResponseEntity<List<Factures>>(con, HttpStatus.OK);
@@ -50,48 +51,59 @@ public class FactureController {
 	
     @RequestMapping(value= "/facture", method= RequestMethod.POST)
     @ResponseBody
-	public Factures addFacture(@RequestBody Factures con, HttpServletResponse response){
+	public ResponseEntity<?> addFacture(@RequestBody Factures con){
 
+    	metier.save(con);
+		 return new ResponseEntity<>(con, HttpStatus.CREATED);
+		 
     	//Si l'con n'existe pas déja
-    	//if(!metier.findByContenu(con.getContent()).isPresent()){
-    		//return metier.save(con);
+    	//if(metier.findByContenu(con.getContent())!= null){
+    		// metier.save(con);
+    		 //return new ResponseEntity<>(typeetatcivil, HttpStatus.CREATED);
     	//}else {
-    		//throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Facture existe déjà");
+    		//return new ResponseEntity<>("Facture existe déjà", HttpStatus.CONFLICT);
     	//}
-    	return null;
-
+    
 	}
     
     @RequestMapping(value= "/facture/{id}", method= RequestMethod.PUT)
     @ResponseBody
-	public Factures updateFacture(@PathVariable("id") Long id, @RequestBody Factures con){
+	public ResponseEntity<?> updateFacture(@PathVariable("id") Long id, @RequestBody Factures con){
 
 Optional<Factures> optionalart = metier.findById(id);
     	
-        if (optionalart.isPresent()){
-        	
-        	Factures art = optionalart.get();
-        	art.setMontant(con.getMontant());
-        	return metier.save(art);
+        if (optionalart== null){
+          	 return new ResponseEntity<>("Facture non trouvé", HttpStatus.NOT_FOUND);
         	
         }else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Facture non trouvé");
+
+        	Factures art = optionalart.get();
+        	art.setDate(con.getDate());
+        	art.setMontant(con.getMontant());
+        	art.setRemise(con.getRemise());
+        	art.setTva(con.getTva());
+        	art.setEtat(con.getEtat());
+        	art.setIdDemande(con.getIdDemande());
+        	
+        	 metier.save(art);
+        	 
+        	 return new ResponseEntity<>(art, HttpStatus.OK);
+        	
 		}
 	}
     
     @RequestMapping(value= "/facture/{id}", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
-    public Factures getFactureById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getFactureById(@PathVariable("id") Long id) {
 
     	Optional<Factures> optionalart = metier.findById(id);
 
-    	if (optionalart.isPresent()){
-            
-    		Factures art = optionalart.get();
-    		return art;
+    	if (optionalart== null){
+    		return new ResponseEntity<>("Facture non trouvé", HttpStatus.NOT_FOUND);
     	}else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Facture non trouvé");
+	
+			return new ResponseEntity<>(optionalart, HttpStatus.OK);
 		}
 
     }
@@ -102,7 +114,7 @@ Optional<Factures> optionalart = metier.findById(id);
 
     	Optional<Factures> optionalart  = metier.findById(id);
 
-        if (!optionalart.isPresent()){
+        if (optionalart== null){
             return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
         }else{
 

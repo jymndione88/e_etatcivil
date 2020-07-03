@@ -10,6 +10,10 @@ import com.administration.etatcivil.entities.Declarations;
 
 public interface DeclarationRepository extends JpaRepository<Declarations, Long> {
 
+	@Query("SELECT d FROM Declarations d WHERE d.numero = ?1")
+	Optional<Declarations> findByNum(String num);
+	
+	
 	//Optional<Declarations> findByNumero(String numero);
 	
 	 // @Query("SELECT u FROM User u WHERE u.status = ?1 and u.name = ?2") 

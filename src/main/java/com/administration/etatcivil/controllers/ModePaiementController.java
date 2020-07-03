@@ -23,7 +23,8 @@ import com.administration.etatcivil.entities.ModePaiements;
 import com.administration.etatcivil.entities.TypeEtatcivil;
 import com.administration.etatcivil.repositories.ModePaiementRepository;
 
-@CrossOrigin("http://localhost:4200")
+//@CrossOrigin("http://localhost:4200")
+@CrossOrigin(origins ="*", allowedHeaders = "*")
 @RequestMapping(value= "/api")
 @RestController
 public class ModePaiementController {
@@ -39,7 +40,7 @@ public class ModePaiementController {
     	
     	if (con == null || con.isEmpty()){
     		//erreur 204
-            return new ResponseEntity<List<ModePaiements>>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<List<ModePaiements>>(HttpStatus.NOT_FOUND);
         }else{
 
         	return new ResponseEntity<List<ModePaiements>>(con, HttpStatus.OK);
@@ -49,32 +50,40 @@ public class ModePaiementController {
 	
     @RequestMapping(value= "/modepaiement", method= RequestMethod.POST)
     @ResponseBody
-	public ModePaiements addModePaiement(@RequestBody ModePaiements con, HttpServletResponse response){
+	public ResponseEntity<?> addModePaiement(@RequestBody ModePaiements con){
     	
     	//Si l'con n'existe pas déja
-    	//if(!metier.findByNumero(con.getMode()).isPresent()){
-    		//return metier.save(con);
-    	//}else {
-    		//throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ModePaiement existe déjà");
-    	//}
-    	return null;
+    	if(metier.findByMode(con.getMode())!=null){
+    		 metier.save(con);
+    		 return new ResponseEntity<>(con, HttpStatus.CREATED);
+    	}else {
+    	
+    		return new ResponseEntity<>("ModePaiement existe déjà", HttpStatus.CONFLICT);
+    	}
+    	
 
 	}
     
     @RequestMapping(value= "/modepaiement/{id}", method= RequestMethod.PUT)
     @ResponseBody
-	public ModePaiements updateModePaiement(@PathVariable("id") Long id, @RequestBody ModePaiements con){
+	public ResponseEntity<?> updateModePaiement(@PathVariable("id") Long id, @RequestBody ModePaiements con){
 
 Optional<ModePaiements> optionalart = metier.findById(id);
     	
-        if (optionalart.isPresent()){
-        	
-        	ModePaiements art = optionalart.get();
-        	art.setMode(con.getMode());
-        	return metier.save(art);
+        if (optionalart== null){
+          	 return new ResponseEntity<>("ModePaiement non trouvé", HttpStatus.NOT_FOUND);
         	
         }else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ModePaiement non trouvé");
+
+        	ModePaiements art = optionalart.get();
+        	art.setMode(con.getMode());
+        	art.setOperateur(con.getOperateur());
+        	art.setCodeTransaction(con.getCodeTransaction());
+        	
+        	 metier.save(art);
+        	 
+        	 return new ResponseEntity<>(art, HttpStatus.OK);
+        	
 		}
 
 	}
@@ -82,16 +91,30 @@ Optional<ModePaiements> optionalart = metier.findById(id);
     @RequestMapping(value= "/modepaiement/{id}", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
-    public ModePaiements getModePaiementById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getModePaiementById(@PathVariable("id") Long id) {
 
     	Optional<ModePaiements> optionalart = metier.findById(id);
 
-    	if (optionalart.isPresent()){
-            
-    		ModePaiements art = optionalart.get();
-    		return art;
+    	if (optionalart== null){
+    		return new ResponseEntity<>("ModePaiement non trouvé", HttpStatus.NOT_FOUND);
+    		
     	}else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ModePaiement non trouvé");
+    		return new ResponseEntity<>(optionalart, HttpStatus.OK);
+		}
+    }
+    
+    @RequestMapping(value= "/modepaiement/{id}/{type}", method= RequestMethod.GET,
+    		headers={"Accept=application/json"})
+    @ResponseBody
+    public ResponseEntity<?> getModePaiementByType(@PathVariable("id") Long id, @PathVariable("type") String type) {
+
+    	Optional<ModePaiements> optionalart = metier.findByMode(type);
+
+    	if (optionalart== null){
+    		return new ResponseEntity<>("ModePaiement non trouvé", HttpStatus.NOT_FOUND);
+    		
+    	}else { 
+    		return new ResponseEntity<>(optionalart, HttpStatus.OK);
 		}
     }
     
@@ -101,7 +124,7 @@ Optional<ModePaiements> optionalart = metier.findById(id);
 
     	Optional<ModePaiements> optionalart  = metier.findById(id);
 
-        if (!optionalart.isPresent()){
+        if (optionalart== null){
             return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
         }else{
 

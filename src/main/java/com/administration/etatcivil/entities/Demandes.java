@@ -9,13 +9,13 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -25,6 +25,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
@@ -46,8 +48,10 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Demandes.findByNom", query = "SELECT d FROM Demandes d WHERE d.nom = :nom"),
     @NamedQuery(name = "Demandes.findByPrenom", query = "SELECT d FROM Demandes d WHERE d.prenom = :prenom"),
     @NamedQuery(name = "Demandes.findByDatenaiss", query = "SELECT d FROM Demandes d WHERE d.datenaiss = :datenaiss"),
+    @NamedQuery(name = "Demandes.findByNumRegistre", query = "SELECT d FROM Demandes d WHERE d.numRegistre = :numRegistre"),
     @NamedQuery(name = "Demandes.findByPays", query = "SELECT d FROM Demandes d WHERE d.pays = :pays"),
-    @NamedQuery(name = "Demandes.findByNationalite", query = "SELECT d FROM Demandes d WHERE d.nationalite = :nationalite")})
+    @NamedQuery(name = "Demandes.findByNationalite", query = "SELECT d FROM Demandes d WHERE d.nationalite = :nationalite"),
+    @NamedQuery(name = "Demandes.findByEtat", query = "SELECT d FROM Demandes d WHERE d.etat = :etat")})
 public class Demandes implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -89,30 +93,35 @@ public class Demandes implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date datenaiss;
     @Basic(optional = false)
+    @Column(name = "num_registre")
+    private String numRegistre;
+    @Basic(optional = false)
     @Column(name = "pays")
     private String pays;
     @Basic(optional = false)
     @Column(name = "nationalite")
     private String nationalite;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDemande")
+    @Basic(optional = false)
+    @Column(name = "etat")
+    private boolean etat;
+    @Lob
+    @Column(name = "commentaire")
+    private String commentaire;
+    @OneToMany(mappedBy = "idDemande")
+    @JsonIgnore
     private List<Factures> facturesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDemande")
-    private List<Livraisons> livraisonsList;
-    @JoinColumn(name = "id_etat_demande", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private EtatDemandes idEtatDemande;
-    @JoinColumn(name = "id_commune", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Communes idCommune;
     @JoinColumn(name = "id_deces", referencedColumnName = "id")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Deces idDeces;
     @JoinColumn(name = "id_mariage", referencedColumnName = "id")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Mariages idMariage;
     @JoinColumn(name = "id_naissance", referencedColumnName = "id")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Naissances idNaissance;
+    @JoinColumn(name = "id_officier", referencedColumnName = "id")
+    @ManyToOne
+    private Officiers idOfficier;
 
     public Demandes() {
     }
@@ -121,7 +130,7 @@ public class Demandes implements Serializable {
         this.id = id;
     }
 
-    public Demandes(Long id, String numero, Date date, String motif, String qualiteDemandeur, String natureActe, int nbreExemplaire, String civilite, String nom, String prenom, Date datenaiss, String pays, String nationalite) {
+    public Demandes(Long id, String numero, Date date, String motif, String qualiteDemandeur, String natureActe, int nbreExemplaire, String civilite, String nom, String prenom, Date datenaiss, String numRegistre, String pays, String nationalite, boolean etat) {
         this.id = id;
         this.numero = numero;
         this.date = date;
@@ -133,8 +142,10 @@ public class Demandes implements Serializable {
         this.nom = nom;
         this.prenom = prenom;
         this.datenaiss = datenaiss;
+        this.numRegistre = numRegistre;
         this.pays = pays;
         this.nationalite = nationalite;
+        this.etat = etat;
     }
 
     public Long getId() {
@@ -225,6 +236,14 @@ public class Demandes implements Serializable {
         this.datenaiss = datenaiss;
     }
 
+    public String getNumRegistre() {
+        return numRegistre;
+    }
+
+    public void setNumRegistre(String numRegistre) {
+        this.numRegistre = numRegistre;
+    }
+
     public String getPays() {
         return pays;
     }
@@ -241,6 +260,22 @@ public class Demandes implements Serializable {
         this.nationalite = nationalite;
     }
 
+    public boolean getEtat() {
+        return etat;
+    }
+
+    public void setEtat(boolean etat) {
+        this.etat = etat;
+    }
+
+    public String getCommentaire() {
+        return commentaire;
+    }
+
+    public void setCommentaire(String commentaire) {
+        this.commentaire = commentaire;
+    }
+
     @XmlTransient
     public List<Factures> getFacturesList() {
         return facturesList;
@@ -248,31 +283,6 @@ public class Demandes implements Serializable {
 
     public void setFacturesList(List<Factures> facturesList) {
         this.facturesList = facturesList;
-    }
-
-    @XmlTransient
-    public List<Livraisons> getLivraisonsList() {
-        return livraisonsList;
-    }
-
-    public void setLivraisonsList(List<Livraisons> livraisonsList) {
-        this.livraisonsList = livraisonsList;
-    }
-
-    public EtatDemandes getIdEtatDemande() {
-        return idEtatDemande;
-    }
-
-    public void setIdEtatDemande(EtatDemandes idEtatDemande) {
-        this.idEtatDemande = idEtatDemande;
-    }
-
-    public Communes getIdCommune() {
-        return idCommune;
-    }
-
-    public void setIdCommune(Communes idCommune) {
-        this.idCommune = idCommune;
     }
 
     public Deces getIdDeces() {
@@ -297,6 +307,14 @@ public class Demandes implements Serializable {
 
     public void setIdNaissance(Naissances idNaissance) {
         this.idNaissance = idNaissance;
+    }
+
+    public Officiers getIdOfficier() {
+        return idOfficier;
+    }
+
+    public void setIdOfficier(Officiers idOfficier) {
+        this.idOfficier = idOfficier;
     }
 
     @Override

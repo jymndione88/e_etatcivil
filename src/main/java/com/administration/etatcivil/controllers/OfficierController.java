@@ -24,7 +24,8 @@ import com.administration.etatcivil.entities.TypeEtatcivil;
 import com.administration.etatcivil.repositories.OfficierRepository;
 
 
-@CrossOrigin("http://localhost:4200")
+//@CrossOrigin("http://localhost:4200")
+@CrossOrigin(origins ="*", allowedHeaders = "*")
 @RequestMapping(value= "/api")
 @RestController
 public class OfficierController {
@@ -40,7 +41,7 @@ public class OfficierController {
 
     	if (con == null || con.isEmpty()){
     		//erreur 204
-            return new ResponseEntity<List<Officiers>>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<List<Officiers>>(HttpStatus.NOT_FOUND);
         }else{
 
         	return new ResponseEntity<List<Officiers>>(con, HttpStatus.OK);
@@ -50,31 +51,40 @@ public class OfficierController {
 	
     @RequestMapping(value= "/officier", method= RequestMethod.POST)
     @ResponseBody
-	public Officiers addOfficier(@RequestBody Officiers con, HttpServletResponse response){
+	public ResponseEntity<?> addOfficier(@RequestBody Officiers con){
 
+    	 metier.save(con);
+ 		return new ResponseEntity<>(con, HttpStatus.CREATED);
+ 		
     	//Si l'con n'existe pas déja
     	//if(!metier.findByNumero(con.getLogin()).isPresent()){
-    		//return metier.save(con);
+    		// metier.save(con);
+    		//return new ResponseEntity<>(typeetatcivil, HttpStatus.CREATED);
     	//}else {
     		//throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Officier existe déjà");
     	//}
-    	return null;
+    	
 	}
     
     @RequestMapping(value= "/officier/{id}", method= RequestMethod.PUT)
     @ResponseBody
-	public Officiers updateOfficier(@PathVariable("id") Long id, @RequestBody Officiers con){
+	public ResponseEntity<?> updateOfficier(@PathVariable("id") Long id, @RequestBody Officiers con){
 
 Optional<Officiers> optionalart = metier.findById(id);
     	
-        if (optionalart.isPresent()){
-        	
-        	Officiers art = optionalart.get();
-        	//art.setLogin(con.getLogin());
-        	return metier.save(art);
-        	
+        if (optionalart== null){
+          	 return new ResponseEntity<>("Officier non trouvé", HttpStatus.NOT_FOUND);
+          	 
         }else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Officier non trouvé");
+
+        	Officiers art = optionalart.get();
+        	art.setIdInternaute(con.getIdInternaute());
+        	art.setIdEtatCivil(con.getIdEtatCivil());
+        	art.setIdRoleOfficier(con.getIdRoleOfficier());
+        	
+        	 metier.save(art);
+        	 return new ResponseEntity<>(art, HttpStatus.OK);
+        	
 		}
         
 	}
@@ -82,16 +92,14 @@ Optional<Officiers> optionalart = metier.findById(id);
     @RequestMapping(value= "/officier/{id}", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
-    public Officiers getOfficierById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getOfficierById(@PathVariable("id") Long id) {
 
     	Optional<Officiers> optionalart = metier.findById(id);
 
-    	if (optionalart.isPresent()){
-            
-    		Officiers art = optionalart.get();
-    		return art;
+    	if (optionalart== null){
+    		return new ResponseEntity<>("Officier non trouvé", HttpStatus.NOT_FOUND);
     	}else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Officier non trouvé");
+    		return new ResponseEntity<>(optionalart, HttpStatus.OK);
 		}
     }
     
@@ -101,7 +109,7 @@ Optional<Officiers> optionalart = metier.findById(id);
 
     	Optional<Officiers> optionalart  = metier.findById(id);
 
-        if (!optionalart.isPresent()){
+        if (optionalart== null){
             return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
         }else{
 

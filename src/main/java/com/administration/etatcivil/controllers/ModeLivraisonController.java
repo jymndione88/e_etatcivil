@@ -24,7 +24,8 @@ import com.administration.etatcivil.entities.TypeEtatcivil;
 import com.administration.etatcivil.repositories.ModeLivraisonRepository;
 
 
-@CrossOrigin("http://localhost:4200")
+//@CrossOrigin("http://localhost:4200")
+@CrossOrigin(origins ="*", allowedHeaders = "*")
 @RequestMapping(value= "/api")
 @RestController
 public class ModeLivraisonController {
@@ -40,7 +41,7 @@ public class ModeLivraisonController {
 
     	if (con == null || con.isEmpty()){
     		//erreur 204
-            return new ResponseEntity<List<ModeLivraison>>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<List<ModeLivraison>>(HttpStatus.NOT_FOUND);
         }else{
 
         	return new ResponseEntity<List<ModeLivraison>>(con, HttpStatus.OK);
@@ -50,47 +51,67 @@ public class ModeLivraisonController {
 	
     @RequestMapping(value= "/modelivraison", method= RequestMethod.POST)
     @ResponseBody
-	public ModeLivraison addModeLivraison(@RequestBody ModeLivraison con, HttpServletResponse response){
+	public ResponseEntity<?> addModeLivraison(@RequestBody ModeLivraison con){
 
     	//Si l'con n'existe pas déja
-    	//if(!metier.findByNumero(con.getMode()).isPresent()){
-    		//return metier.save(con);
-    	//}else {
-    		//throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ModeLivraison existe déjà");
-    	//}
-    	return null;
+    	if(metier.findByMode(con.getMode())!=null){
+    		 metier.save(con);
+    		 return new ResponseEntity<>(con, HttpStatus.CREATED);
+    	}else {
+    		
+    		return new ResponseEntity<>("ModeLivraison existe déjà", HttpStatus.CONFLICT);
+    	}
+    	
 	}
     
     @RequestMapping(value= "/modelivraison/{id}", method= RequestMethod.PUT)
     @ResponseBody
-	public ModeLivraison updateModeLivraison(@PathVariable("id") Long id, @RequestBody ModeLivraison con){
+	public ResponseEntity<?> updateModeLivraison(@PathVariable("id") Long id, @RequestBody ModeLivraison con){
 
 Optional<ModeLivraison> optionalart = metier.findById(id);
     	
-        if (optionalart.isPresent()){
-        	
-        	ModeLivraison art = optionalart.get();
-        	art.setMode(con.getMode());
-        	return metier.save(art);
+        if (optionalart== null){
+          	 return new ResponseEntity<>("ModeLivraison non trouvé", HttpStatus.NOT_FOUND);
         	
         }else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ModeLivraison non trouvé");
+
+        	ModeLivraison art = optionalart.get();
+        	art.setMode(con.getMode());
+        	 metier.save(art);
+        	 
+        	 return new ResponseEntity<>(art, HttpStatus.OK);
+        	
 		}
 	}
     
     @RequestMapping(value= "/modelivraison/{id}", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
-    public ModeLivraison getModeLivraisonById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getModeLivraisonById(@PathVariable("id") Long id) {
 
     	Optional<ModeLivraison> optionalart = metier.findById(id);
 
-    	if (optionalart.isPresent()){
-            
-    		ModeLivraison art = optionalart.get();
-    		return art;
+    	if (optionalart== null){
+    		return new ResponseEntity<>("ModeLivraison non trouvé", HttpStatus.NOT_FOUND);
+    		
     	}else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ModeLivraison non trouvé");
+    		return new ResponseEntity<>(optionalart, HttpStatus.OK);
+		}
+
+    }
+    
+    @RequestMapping(value= "/modelivraison/{id}/{type}", method= RequestMethod.GET,
+    		headers={"Accept=application/json"})
+    @ResponseBody
+    public ResponseEntity<?> getModeLivraisonByType(@PathVariable("id") Long id, @PathVariable("type") String type) {
+
+    	Optional<ModeLivraison> optionalart = metier.findByMode(type);
+
+    	if (optionalart== null){
+    		return new ResponseEntity<>("ModeLivraison non trouvé", HttpStatus.NOT_FOUND);
+    		
+    	}else { 
+    		return new ResponseEntity<>(optionalart, HttpStatus.OK);
 		}
 
     }
@@ -101,7 +122,7 @@ Optional<ModeLivraison> optionalart = metier.findById(id);
 
     	Optional<ModeLivraison> optionalart  = metier.findById(id);
 
-        if (!optionalart.isPresent()){
+        if (optionalart== null){
             return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
         }else{
 

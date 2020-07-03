@@ -24,7 +24,8 @@ import com.administration.etatcivil.entities.TypeEtatcivil;
 import com.administration.etatcivil.repositories.RegionRepository;
 
 
-@CrossOrigin("http://localhost:4200")
+//@CrossOrigin("http://localhost:4200")
+@CrossOrigin(origins ="*", allowedHeaders = "*")
 @RequestMapping(value= "/api")
 @RestController
 public class RegionController {
@@ -40,7 +41,7 @@ public class RegionController {
 
     	if (con == null || con.isEmpty()){
     		//erreur 204
-            return new ResponseEntity<List<Regions>>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<List<Regions>>(HttpStatus.NOT_FOUND);
         }else{
 
         	return new ResponseEntity<List<Regions>>(con, HttpStatus.OK);
@@ -50,31 +51,36 @@ public class RegionController {
 	
     @RequestMapping(value= "/region", method= RequestMethod.POST)
     @ResponseBody
-	public Regions addRegion(@RequestBody Regions con, HttpServletResponse response){
+	public ResponseEntity<?> addRegion(@RequestBody Regions con){
 
     	//Si l'con n'existe pas déja
-    	//if(!metier.findByNumero(con.getCode()).isPresent()){
-    		//return metier.save(con);
-    	//}else {
-    		//throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Region existe déjà");
-    	//}
-    	return null;
+    	if(metier.findByCode(con.getCode())!= null){
+    		 metier.save(con);
+    	 		return new ResponseEntity<>(con, HttpStatus.CREATED);
+    	}else {
+    	
+    		return new ResponseEntity<>("Region existe déjà", HttpStatus.CONFLICT);
+    	}
+    	
 	}
     
     @RequestMapping(value= "/region/{id}", method= RequestMethod.PUT)
     @ResponseBody
-	public Regions updateRegion(@PathVariable("id") Long id, @RequestBody Regions con){
+	public ResponseEntity<?> updateRegion(@PathVariable("id") Long id, @RequestBody Regions con){
 
 Optional<Regions> optionalart = metier.findById(id);
     	
-        if (optionalart.isPresent()){
-        	
-        	Regions art = optionalart.get();
-        	art.setCode(con.getCode());
-        	return metier.save(art);
+        if (optionalart== null){
+          	 return new ResponseEntity<>("Region non trouvé", HttpStatus.NOT_FOUND);
         	
         }else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Region non trouvé");
+
+        	Regions art = optionalart.get();
+        	art.setCode(con.getCode());
+        	art.setLibelle(con.getLibelle());
+        	 metier.save(art);
+        	return new ResponseEntity<>(art, HttpStatus.OK);
+        	
 		}
         
 	}
@@ -82,16 +88,14 @@ Optional<Regions> optionalart = metier.findById(id);
     @RequestMapping(value= "/region/{id}", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
-    public Regions getRegionById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getRegionById(@PathVariable("id") Long id) {
 
     	Optional<Regions> optionalart = metier.findById(id);
 
-    	if (optionalart.isPresent()){
-            
-    		Regions art = optionalart.get();
-    		return art;
+    	if (optionalart== null){
+    		return new ResponseEntity<>("Region non trouvé", HttpStatus.NOT_FOUND);
     	}else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Region non trouvé");
+    		return new ResponseEntity<>(optionalart, HttpStatus.OK);
 		}
     }
     
@@ -101,7 +105,7 @@ Optional<Regions> optionalart = metier.findById(id);
 
     	Optional<Regions> optionalart  = metier.findById(id);
 
-        if (!optionalart.isPresent()){
+        if (optionalart== null){
             return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
         }else{
 

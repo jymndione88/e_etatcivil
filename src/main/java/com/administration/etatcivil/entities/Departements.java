@@ -23,6 +23,8 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author Utilisateur
@@ -53,6 +55,7 @@ public class Departements implements Serializable {
     @ManyToOne(optional = false)
     private Regions idRegion;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDepartement")
+    @JsonIgnore
     private List<Arrondissements> arrondissementsList;
 
     public Departements() {

@@ -17,8 +17,24 @@
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
+	
+	<repositories>
+        <repository>
+            <id>com.e-iceblue</id>
+            <name>e-iceblue</name>
+            <url>http://repo.e-iceblue.com/nexus/content/groups/public/</url>
+        </repository>
+</repositories>
 
 	<dependencies>
+	
+	<!-- signature numerique  -->
+    <dependency>
+        <groupId> e-iceblue </groupId>
+        <artifactId>spire.pdf</artifactId>
+        <version>3.4.2</version>
+    </dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -83,11 +99,10 @@
         </dependency>
         
 		
-		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-security</artifactId>
-		</dependency> 	-->
+		</dependency> 	
         
 		<!-- https://mvnrepository.com/artifact/com.auth0/java-jwt 
 		<dependency>
@@ -96,6 +111,13 @@
 		    <version>3.7.0</version>
 		</dependency>	-->
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-context-support -->
+		
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.1</version>
+		</dependency>
+		
 		<dependency>
 		    <groupId>org.springframework</groupId>
 		    <artifactId>spring-context-support</artifactId>

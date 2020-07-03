@@ -10,6 +10,9 @@ import com.administration.etatcivil.entities.ModePaiements;
 
 public interface ModePaiementRepository extends JpaRepository<ModePaiements, Long> {
 
+	@Query("SELECT b FROM ModePaiements b WHERE b.mode = ?1")
+	Optional<ModePaiements> findByMode(String mode);
+	
 	//Optional<ModePaiements> findByNumero(String numero);
 	
 	 // @Query("SELECT u FROM User u WHERE u.status = ?1 and u.name = ?2") 

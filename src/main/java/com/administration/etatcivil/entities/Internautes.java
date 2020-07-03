@@ -7,14 +7,19 @@ package com.administration.etatcivil.entities;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
+
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -38,7 +43,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
     @NamedQuery(name = "Internautes.findByLogin", query = "SELECT i FROM Internautes i WHERE i.login = :login"),
     @NamedQuery(name = "Internautes.findByEmail", query = "SELECT i FROM Internautes i WHERE i.email = :email"),
     @NamedQuery(name = "Internautes.findByPassword", query = "SELECT i FROM Internautes i WHERE i.password = :password"),
-    @NamedQuery(name = "Internautes.findByResetPassword", query = "SELECT i FROM Internautes i WHERE i.resetPassword = :resetPassword")})
+    @NamedQuery(name = "Internautes.findByResetPassword", query = "SELECT i FROM Internautes i WHERE i.resetPassword = :resetPassword"),
+    @NamedQuery(name = "Internautes.findByActive", query = "SELECT i FROM Internautes i WHERE i.active = :active")})
 public class Internautes implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -59,11 +65,12 @@ public class Internautes implements Serializable {
     @Basic(optional = false)
     @Column(name = "reset_password")
     private String resetPassword;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idInternaute")
-    private List<InternauteRoles> internauteRolesList;
+    @Basic(optional = false)
+    @Column(name = "active")
+    private boolean active;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idInternaute")
     @JsonIgnore
-    private List<Officiers> officiersList;
+    private List<InternauteRoles> internauteRolesList;
     @JoinColumn(name = "id_personne", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Personnes idPersonne;
@@ -71,21 +78,42 @@ public class Internautes implements Serializable {
     @JsonIgnore
     private List<Declarations> declarationsList;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "internaute_roles",
+            joinColumns = @JoinColumn(name = "id_internaute", referencedColumnName="id"),
+            inverseJoinColumns = @JoinColumn(name = "id_role", referencedColumnName="id"))
+    private Set<Roles> roles;
+    
     public Internautes() {
     }
 
     public Internautes(Long id) {
         this.id = id;
     }
+    
+    public Internautes(String login, String email, String password) {
+        this.login = login;
+        this.email = email;
+        this.password = password;
+    }
 
-    public Internautes(Long id, String login, String email, String password, String resetPassword) {
+    public Internautes(Long id, String login, String email, String password, String resetPassword, boolean active) {
         this.id = id;
         this.login = login;
         this.email = email;
         this.password = password;
         this.resetPassword = resetPassword;
+        this.active = active;
     }
 
+    public Set<Roles> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Roles> roles) {
+        this.roles = roles;
+    }
+    
     public Long getId() {
         return id;
     }
@@ -126,6 +154,14 @@ public class Internautes implements Serializable {
         this.resetPassword = resetPassword;
     }
 
+    public boolean getActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     @XmlTransient
     public List<InternauteRoles> getInternauteRolesList() {
         return internauteRolesList;
@@ -133,15 +169,6 @@ public class Internautes implements Serializable {
 
     public void setInternauteRolesList(List<InternauteRoles> internauteRolesList) {
         this.internauteRolesList = internauteRolesList;
-    }
-
-    @XmlTransient
-    public List<Officiers> getOfficiersList() {
-        return officiersList;
-    }
-
-    public void setOfficiersList(List<Officiers> officiersList) {
-        this.officiersList = officiersList;
     }
 
     public Personnes getIdPersonne() {

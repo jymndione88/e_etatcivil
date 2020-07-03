@@ -9,14 +9,11 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -25,6 +22,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
@@ -56,7 +55,9 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Mariages.findByAdressParentConjoint", query = "SELECT m FROM Mariages m WHERE m.adressParentConjoint = :adressParentConjoint"),
     @NamedQuery(name = "Mariages.findByNomPereConjointe", query = "SELECT m FROM Mariages m WHERE m.nomPereConjointe = :nomPereConjointe"),
     @NamedQuery(name = "Mariages.findByNomMereConjointe", query = "SELECT m FROM Mariages m WHERE m.nomMereConjointe = :nomMereConjointe"),
-    @NamedQuery(name = "Mariages.findByAdressParentConjointe", query = "SELECT m FROM Mariages m WHERE m.adressParentConjointe = :adressParentConjointe")})
+    @NamedQuery(name = "Mariages.findByAdressParentConjointe", query = "SELECT m FROM Mariages m WHERE m.adressParentConjointe = :adressParentConjointe"),
+    @NamedQuery(name = "Mariages.findByIdOfficier", query = "SELECT m FROM Mariages m WHERE m.idOfficier = :idOfficier"),
+    @NamedQuery(name = "Mariages.findByIdEtatCivil", query = "SELECT m FROM Mariages m WHERE m.idEtatCivil = :idEtatCivil")})
 public class Mariages implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -131,13 +132,14 @@ public class Mariages implements Serializable {
     @Basic(optional = false)
     @Column(name = "adress_parent_conjointe")
     private String adressParentConjointe;
-    @JoinColumn(name = "id_etat_civil", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private EtatCivils idEtatCivil;
-    @JoinColumn(name = "id_officier", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Officiers idOfficier;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idMariage")
+    @Basic(optional = false)
+    @Column(name = "id_officier")
+    private long idOfficier;
+    @Basic(optional = false)
+    @Column(name = "id_etat_civil")
+    private long idEtatCivil;
+    @OneToMany(mappedBy = "idMariage")
+    @JsonIgnore
     private List<Demandes> demandesList;
 
     public Mariages() {
@@ -147,7 +149,7 @@ public class Mariages implements Serializable {
         this.id = id;
     }
 
-    public Mariages(Long id, Date date, String numero, String type, String regime, String contrat, String nomConjoint, String prenomConjoint, String nomConjointe, String prenomConjointe, Date datenaissConjoint, String lieunaissConjoint, String professionConjoint, Date datenaissConjointe, String lieunaissConjointe, String professionConjointe, String nomPereConjoint, String nomMereConjoint, String adressParentConjoint, String nomPereConjointe, String nomMereConjointe, String adressParentConjointe) {
+    public Mariages(Long id, Date date, String numero, String type, String regime, String contrat, String nomConjoint, String prenomConjoint, String nomConjointe, String prenomConjointe, Date datenaissConjoint, String lieunaissConjoint, String professionConjoint, Date datenaissConjointe, String lieunaissConjointe, String professionConjointe, String nomPereConjoint, String nomMereConjoint, String adressParentConjoint, String nomPereConjointe, String nomMereConjointe, String adressParentConjointe, long idOfficier, long idEtatCivil) {
         this.id = id;
         this.date = date;
         this.numero = numero;
@@ -170,6 +172,8 @@ public class Mariages implements Serializable {
         this.nomPereConjointe = nomPereConjointe;
         this.nomMereConjointe = nomMereConjointe;
         this.adressParentConjointe = adressParentConjointe;
+        this.idOfficier = idOfficier;
+        this.idEtatCivil = idEtatCivil;
     }
 
     public Long getId() {
@@ -348,20 +352,20 @@ public class Mariages implements Serializable {
         this.adressParentConjointe = adressParentConjointe;
     }
 
-    public EtatCivils getIdEtatCivil() {
-        return idEtatCivil;
-    }
-
-    public void setIdEtatCivil(EtatCivils idEtatCivil) {
-        this.idEtatCivil = idEtatCivil;
-    }
-
-    public Officiers getIdOfficier() {
+    public long getIdOfficier() {
         return idOfficier;
     }
 
-    public void setIdOfficier(Officiers idOfficier) {
+    public void setIdOfficier(long idOfficier) {
         this.idOfficier = idOfficier;
+    }
+
+    public long getIdEtatCivil() {
+        return idEtatCivil;
+    }
+
+    public void setIdEtatCivil(long idEtatCivil) {
+        this.idEtatCivil = idEtatCivil;
     }
 
     @XmlTransient

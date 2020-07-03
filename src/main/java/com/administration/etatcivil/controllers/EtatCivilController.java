@@ -24,7 +24,8 @@ import com.administration.etatcivil.entities.TypeEtatcivil;
 import com.administration.etatcivil.repositories.EtatCivilRepository;
 
 
-@CrossOrigin("http://localhost:4200")
+//@CrossOrigin("http://localhost:4200")
+@CrossOrigin(origins ="*", allowedHeaders = "*")
 @RequestMapping(value= "/api")
 @RestController
 public class EtatCivilController {
@@ -40,7 +41,7 @@ public class EtatCivilController {
 
     	if (con == null || con.isEmpty()){
     		//erreur 204
-            return new ResponseEntity<List<EtatCivils>>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<List<EtatCivils>>(HttpStatus.NOT_FOUND);
         }else{
 
         	return new ResponseEntity<List<EtatCivils>>(con, HttpStatus.OK);
@@ -50,31 +51,39 @@ public class EtatCivilController {
 	
     @RequestMapping(value= "/etatcivil", method= RequestMethod.POST)
     @ResponseBody
-	public EtatCivils addEtatCivil(@RequestBody EtatCivils con, HttpServletResponse response){
+	public ResponseEntity<?>  addEtatCivil(@RequestBody EtatCivils con){
 
     	//Si l'con n'existe pas déja
-    	//if(!metier.findByNumero(con.getCode()).isPresent()){
-    		//return metier.save(con);
-    	//}else {
-    		//throw new ResponseStatusException(HttpStatus.FORBIDDEN, "EtatCivil existe déjà");
-    	//}
-    	return null;
+    	if(metier.findByCode(con.getCode())!= null){
+    		 metier.save(con);
+    		 return new ResponseEntity<>(con, HttpStatus.CREATED);
+    	}else {
+    		
+    		return new ResponseEntity<>("EtatCivil existe déjà", HttpStatus.CONFLICT);
+    	}
+    	
 	}
     
     @RequestMapping(value= "/etatcivil/{id}", method= RequestMethod.PUT)
     @ResponseBody
-	public EtatCivils updateEtatCivil(@PathVariable("id") Long id, @RequestBody EtatCivils con){
+	public ResponseEntity<?> updateEtatCivil(@PathVariable("id") Long id, @RequestBody EtatCivils con){
 
 Optional<EtatCivils> optionalart = metier.findById(id);
     	
-        if (optionalart.isPresent()){
-        	
-        	EtatCivils art = optionalart.get();
-        	art.setCode(con.getCode());
-        	return metier.save(art);
+        if (optionalart== null){
+          	 return new ResponseEntity<>("EtatCivil non trouvé", HttpStatus.NOT_FOUND);
         	
         }else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "EtatCivil non trouvé");
+
+        	EtatCivils art = optionalart.get();
+        	art.setCode(con.getCode());
+        	art.setLibelle(con.getLibelle());
+        	art.setIdCommune(con.getIdCommune());
+        	art.setIdTypeEtatCivil(con.getIdTypeEtatCivil());
+        	
+        	 metier.save(art);
+        	 return new ResponseEntity<>(art, HttpStatus.OK);
+        	
 		}
 
 	}
@@ -82,16 +91,15 @@ Optional<EtatCivils> optionalart = metier.findById(id);
     @RequestMapping(value= "/etatcivil/{id}", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
-    public EtatCivils getEtatCivilById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getEtatCivilById(@PathVariable("id") Long id) {
 
     	Optional<EtatCivils> optionalart = metier.findById(id);
 
-    	if (optionalart.isPresent()){
+    	if (optionalart== null){
+    		return new ResponseEntity<>("EtatCivil non trouvé", HttpStatus.NOT_FOUND);
             
-    		EtatCivils art = optionalart.get();
-    		return art;
     	}else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "EtatCivil non trouvé");
+    		return new ResponseEntity<>(optionalart, HttpStatus.OK);
 		}
     }
     
@@ -102,7 +110,7 @@ Optional<EtatCivils> optionalart = metier.findById(id);
 
     	Optional<EtatCivils> optionalart  = metier.findById(id);
 
-        if (!optionalart.isPresent()){
+        if (optionalart== null){
             return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
         }else{
 

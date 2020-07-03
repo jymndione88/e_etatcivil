@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,6 +24,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
@@ -76,7 +77,6 @@ public class Deces implements Serializable {
     @Column(name = "heure_deces")
     @Temporal(TemporalType.TIME)
     private Date heureDeces;
-    @Basic(optional = false)
     @Column(name = "motif")
     private String motif;
     @JoinColumn(name = "id_declaration", referencedColumnName = "id")
@@ -85,7 +85,8 @@ public class Deces implements Serializable {
     @JoinColumn(name = "id_lieu_hospitalier", referencedColumnName = "id")
     @ManyToOne
     private LieuHospitalier idLieuHospitalier;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDeces")
+    @OneToMany(mappedBy = "idDeces")
+    @JsonIgnore
     private List<Demandes> demandesList;
 
     public Deces() {
@@ -95,7 +96,7 @@ public class Deces implements Serializable {
         this.id = id;
     }
 
-    public Deces(Long id, String nomMedecin, String nomMort, String prenomMort, Date datenaiss, String lieunaiss, Date dateDeces, Date heureDeces, String motif) {
+    public Deces(Long id, String nomMedecin, String nomMort, String prenomMort, Date datenaiss, String lieunaiss, Date dateDeces, Date heureDeces) {
         this.id = id;
         this.nomMedecin = nomMedecin;
         this.nomMort = nomMort;
@@ -104,7 +105,6 @@ public class Deces implements Serializable {
         this.lieunaiss = lieunaiss;
         this.dateDeces = dateDeces;
         this.heureDeces = heureDeces;
-        this.motif = motif;
     }
 
     public Long getId() {

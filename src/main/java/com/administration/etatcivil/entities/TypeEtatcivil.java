@@ -21,6 +21,8 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author Utilisateur
@@ -48,6 +50,7 @@ public class TypeEtatcivil implements Serializable {
     @Column(name = "type")
     private String type;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idTypeEtatCivil")
+    @JsonIgnore
     private List<EtatCivils> etatCivilsList;
 
     public TypeEtatcivil() {

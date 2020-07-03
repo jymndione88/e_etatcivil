@@ -13,7 +13,14 @@ import com.administration.etatcivil.entities.Personnes;
 
 public interface InternauteRepository extends JpaRepository<Internautes, Long>{
 	
-	Internautes findByEmail(String email);
+	@Query("SELECT u FROM Internautes u WHERE u.login = :username")
+	Optional<Internautes> findByUsername(String username);
+	
+	@Query("SELECT u FROM Internautes u WHERE u.email = :email")
+	Optional<Internautes> findByEmail(String email);
+	
+	@Query("SELECT u.login FROM Internautes u WHERE u.email = :email")
+	String findLoginByEmail(String email);
 	
 	//@Query("SELECT p FROM personnes p INNER JOIN p.internautesList i WHERE i.email = :email")
 	//Personnes getPersonneByEmail(@Param("email") String email);

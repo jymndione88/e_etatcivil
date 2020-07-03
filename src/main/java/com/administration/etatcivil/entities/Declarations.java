@@ -16,6 +16,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -40,7 +41,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
     @NamedQuery(name = "Declarations.findById", query = "SELECT d FROM Declarations d WHERE d.id = :id"),
     @NamedQuery(name = "Declarations.findByNumero", query = "SELECT d FROM Declarations d WHERE d.numero = :numero"),
     @NamedQuery(name = "Declarations.findByDate", query = "SELECT d FROM Declarations d WHERE d.date = :date"),
-    @NamedQuery(name = "Declarations.findByQualiteDeclarant", query = "SELECT d FROM Declarations d WHERE d.qualiteDeclarant = :qualiteDeclarant")})
+    @NamedQuery(name = "Declarations.findByQualiteDeclarant", query = "SELECT d FROM Declarations d WHERE d.qualiteDeclarant = :qualiteDeclarant"),
+    @NamedQuery(name = "Declarations.findByStatut", query = "SELECT d FROM Declarations d WHERE d.statut = :statut")})
 public class Declarations implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -59,12 +61,17 @@ public class Declarations implements Serializable {
     @Basic(optional = false)
     @Column(name = "qualite_declarant")
     private String qualiteDeclarant;
+    @Column(name = "statut")
+    private Boolean statut;
+    @Lob
+    @Column(name = "commentaire")
+    private String commentaire;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDeclaration")
     @JsonIgnore
     private List<Deces> decesList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDeclaration")
+    @OneToMany(mappedBy = "idDeclaration")
     @JsonIgnore
-    private List<Naissances> naissancesList;
+    private List<Factures> facturesList;
     @JoinColumn(name = "id_internaute", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Internautes idInternaute;
@@ -118,6 +125,22 @@ public class Declarations implements Serializable {
         this.qualiteDeclarant = qualiteDeclarant;
     }
 
+    public Boolean getStatut() {
+        return statut;
+    }
+
+    public void setStatut(Boolean statut) {
+        this.statut = statut;
+    }
+
+    public String getCommentaire() {
+        return commentaire;
+    }
+
+    public void setCommentaire(String commentaire) {
+        this.commentaire = commentaire;
+    }
+
     @XmlTransient
     public List<Deces> getDecesList() {
         return decesList;
@@ -128,12 +151,12 @@ public class Declarations implements Serializable {
     }
 
     @XmlTransient
-    public List<Naissances> getNaissancesList() {
-        return naissancesList;
+    public List<Factures> getFacturesList() {
+        return facturesList;
     }
 
-    public void setNaissancesList(List<Naissances> naissancesList) {
-        this.naissancesList = naissancesList;
+    public void setFacturesList(List<Factures> facturesList) {
+        this.facturesList = facturesList;
     }
 
     public Internautes getIdInternaute() {

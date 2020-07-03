@@ -24,7 +24,8 @@ import com.administration.etatcivil.entities.TypeEtatcivil;
 import com.administration.etatcivil.repositories.DepartementRepository;
 
 
-@CrossOrigin("http://localhost:4200")
+//@CrossOrigin("http://localhost:4200")
+@CrossOrigin(origins ="*", allowedHeaders = "*")
 @RequestMapping(value= "/api")
 @RestController
 public class DepartementController {
@@ -40,7 +41,7 @@ public class DepartementController {
 
     	if (con == null || con.isEmpty()){
     		//erreur 204
-            return new ResponseEntity<List<Departements>>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<List<Departements>>(HttpStatus.NOT_FOUND);
         }else{
 
         	return new ResponseEntity<List<Departements>>(con, HttpStatus.OK);
@@ -50,31 +51,38 @@ public class DepartementController {
 	
     @RequestMapping(value= "/departement", method= RequestMethod.POST)
     @ResponseBody
-	public Departements addDepartement(@RequestBody Departements con, HttpServletResponse response){
+	public ResponseEntity<?>  addDepartement(@RequestBody Departements con){
 
     	//Si l'con n'existe pas déja
-    	//if(!metier.findByNumero(con.getLibelle()).isPresent()){
-    		//return metier.save(con);
-    	//}else {
-    		//throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Departement existe déjà");
-    	//}
-    	return null;
+    	if(metier.findByCode(con.getCode())!= null){
+    		 metier.save(con);
+    		 return new ResponseEntity<>(con, HttpStatus.CREATED);
+    	}else {
+    		
+    		return new ResponseEntity<>("Departement existe déjà", HttpStatus.CONFLICT);
+    	}
+    	
 	}
     
     @RequestMapping(value= "/departement/{id}", method= RequestMethod.PUT)
     @ResponseBody
-	public Departements updateDepartement(@PathVariable("id") Long id, @RequestBody Departements con){
+	public ResponseEntity<?> updateDepartement(@PathVariable("id") Long id, @RequestBody Departements con){
 
 Optional<Departements> optionalart = metier.findById(id);
     	
-        if (optionalart.isPresent()){
-        	
-        	Departements art = optionalart.get();
-        	art.setLibelle(con.getLibelle());
-        	return metier.save(art);
+        if (optionalart== null){
+          	 return new ResponseEntity<>("Departement non trouvé", HttpStatus.NOT_FOUND);
         	
         }else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Departement non trouvé");
+
+        	Departements art = optionalart.get();
+        	art.setCode(con.getCode());
+        	art.setLibelle(con.getLibelle());
+        	art.setIdRegion(con.getIdRegion());
+        	
+        	 metier.save(art);
+        	 return new ResponseEntity<>(art, HttpStatus.OK);
+        	
 		}
 
 	}
@@ -82,16 +90,15 @@ Optional<Departements> optionalart = metier.findById(id);
     @RequestMapping(value= "/departement/{id}", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
-    public Departements getDepartementById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getDepartementById(@PathVariable("id") Long id) {
 
     	Optional<Departements> optionalart = metier.findById(id);
 
-    	if (optionalart.isPresent()){
+    	if (optionalart== null){
+    		return new ResponseEntity<>("Departement non trouvé", HttpStatus.NOT_FOUND);
             
-    		Departements art = optionalart.get();
-    		return art;
     	}else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Departement non trouvé");
+    		return new ResponseEntity<>(optionalart, HttpStatus.OK);
 		}
 
     }
@@ -102,7 +109,7 @@ Optional<Departements> optionalart = metier.findById(id);
 
     	Optional<Departements> optionalart  = metier.findById(id);
 
-        if (!optionalart.isPresent()){
+        if (optionalart== null){
             return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
         }else{
 

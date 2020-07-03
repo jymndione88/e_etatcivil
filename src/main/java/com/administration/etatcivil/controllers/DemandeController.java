@@ -24,7 +24,8 @@ import com.administration.etatcivil.entities.TypeEtatcivil;
 import com.administration.etatcivil.repositories.DemandeRepository;
 import java.lang.String;
 
-@CrossOrigin("http://localhost:4200")
+//@CrossOrigin("http://localhost:4200")
+@CrossOrigin(origins ="*", allowedHeaders = "*")
 @RequestMapping(value= "/api")
 @RestController
 public class DemandeController {
@@ -32,10 +33,10 @@ public class DemandeController {
 	@Autowired
 	private DemandeRepository metier;
 	                      
-    @RequestMapping(value= "/demande/{nat}", method= RequestMethod.GET,
+    @RequestMapping(value= "/demande/{nat}/{liste}", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
-	public ResponseEntity<List<Demandes>> getListDemande(@PathVariable("nat") String nat){
+	public ResponseEntity<List<Demandes>> getListDemande(@PathVariable("nat") String nat, @PathVariable("liste") String liste){
     	
     	List<Demandes> con= null;
     			
@@ -90,10 +91,9 @@ Optional<Demandes> optionalart = metier.findById(id);
         	art.setDatenaiss(con.getDate());
         	art.setPays(con.getPays());
         	art.setNationalite(con.getNationalite());
-        	//art.setEtat(con.getEtat());
+        	art.setEtat(con.getEtat());
+        	art.setCommentaire(con.getCommentaire());
         	
-        	art.setIdCommune(con.getIdCommune());
-
         	return new ResponseEntity<>(art, HttpStatus.OK);
 		}
         

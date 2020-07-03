@@ -22,7 +22,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.administration.etatcivil.entities.TypeEtatcivil;
 import com.administration.etatcivil.repositories.TypeEtatCivilRepository;
 
-@CrossOrigin("http://localhost:4200")
+//@CrossOrigin("http://localhost:4200")
+@CrossOrigin(origins ="*", allowedHeaders = "*")
 @RequestMapping(value= "/api")
 @RestController
 public class TypeEtatcivilController {

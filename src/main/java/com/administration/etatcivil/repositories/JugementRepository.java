@@ -10,9 +10,11 @@ import com.administration.etatcivil.entities.Jugements;
 
 public interface JugementRepository extends JpaRepository<Jugements, Long> {
 
+	 @Query("SELECT b FROM Jugements b WHERE b.numero = ?1")
+	 Optional<Jugements> findByNumero(String num);
+	
 	//Optional<Jugements> findByNumero(String numero);
 	
 	 // @Query("SELECT u FROM User u WHERE u.status = ?1 and u.name = ?2") 
-	 //@Query("SELECT b FROM Bien b WHERE b.bien.id = ?1")
-	 //List<Arrondissements> findByTypeBien(Integer type_bien_id);
+	
 }

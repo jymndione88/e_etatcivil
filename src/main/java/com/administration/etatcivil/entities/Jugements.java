@@ -7,7 +7,6 @@ package com.administration.etatcivil.entities;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,14 +16,10 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
@@ -37,6 +32,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
     @NamedQuery(name = "Jugements.findAll", query = "SELECT j FROM Jugements j"),
     @NamedQuery(name = "Jugements.findById", query = "SELECT j FROM Jugements j WHERE j.id = :id"),
     @NamedQuery(name = "Jugements.findByNumero", query = "SELECT j FROM Jugements j WHERE j.numero = :numero"),
+    @NamedQuery(name = "Jugements.findByAnnee", query = "SELECT j FROM Jugements j WHERE j.annee = :annee"),
     @NamedQuery(name = "Jugements.findByDate", query = "SELECT j FROM Jugements j WHERE j.date = :date"),
     @NamedQuery(name = "Jugements.findByLieu", query = "SELECT j FROM Jugements j WHERE j.lieu = :lieu")})
 public class Jugements implements Serializable {
@@ -51,6 +47,10 @@ public class Jugements implements Serializable {
     @Column(name = "numero")
     private String numero;
     @Basic(optional = false)
+    @Column(name = "annee")
+    @Temporal(TemporalType.DATE)
+    private Date annee;
+    @Basic(optional = false)
     @Column(name = "date")
     @Temporal(TemporalType.DATE)
     private Date date;
@@ -60,9 +60,6 @@ public class Jugements implements Serializable {
     @Lob
     @Column(name = "piece_jointe")
     private byte[] pieceJointe;
-    @OneToMany(mappedBy = "idJugement")
-    @JsonIgnore
-    private List<Naissances> naissancesList;
 
     public Jugements() {
     }
@@ -71,9 +68,10 @@ public class Jugements implements Serializable {
         this.id = id;
     }
 
-    public Jugements(Long id, String numero, Date date, String lieu) {
+    public Jugements(Long id, String numero, Date annee, Date date, String lieu) {
         this.id = id;
         this.numero = numero;
+        this.annee = annee;
         this.date = date;
         this.lieu = lieu;
     }
@@ -92,6 +90,14 @@ public class Jugements implements Serializable {
 
     public void setNumero(String numero) {
         this.numero = numero;
+    }
+
+    public Date getAnnee() {
+        return annee;
+    }
+
+    public void setAnnee(Date annee) {
+        this.annee = annee;
     }
 
     public Date getDate() {
@@ -116,15 +122,6 @@ public class Jugements implements Serializable {
 
     public void setPieceJointe(byte[] pieceJointe) {
         this.pieceJointe = pieceJointe;
-    }
-
-    @XmlTransient
-    public List<Naissances> getNaissancesList() {
-        return naissancesList;
-    }
-
-    public void setNaissancesList(List<Naissances> naissancesList) {
-        this.naissancesList = naissancesList;
     }
 
     @Override

@@ -10,9 +10,11 @@ import com.administration.etatcivil.entities.LieuHospitalier;
 
 public interface LieuHospitalierRepository extends JpaRepository<LieuHospitalier, Long> {
 
+	 @Query("SELECT b FROM LieuHospitalier b WHERE b.code = ?1")
+	 Optional<LieuHospitalier> findByCode(String code);
+	
 	//Optional<LieuHospitalier> findByNumero(String numero);
 	
 	 // @Query("SELECT u FROM User u WHERE u.status = ?1 and u.name = ?2") 
-	 //@Query("SELECT b FROM Bien b WHERE b.bien.id = ?1")
-	 //List<Arrondissements> findByTypeBien(Integer type_bien_id);
+	
 }

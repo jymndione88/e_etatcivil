@@ -13,13 +13,13 @@ public interface DemandeRepository extends JpaRepository<Demandes, Long> {
 	
 	//Optional<Demandes> findByNumero(String numero);
 	
-	@Query("SELECT b FROM Demandes b WHERE b.id_naissance not null")
+	@Query("SELECT b FROM Demandes b WHERE b.idNaissance != NULL")
 	List<Demandes> findByNaissance();
 	
-	@Query("SELECT b FROM Demandes b WHERE b.id_mariage not null")
+	@Query("SELECT b FROM Demandes b WHERE b.idMariage != NULL")
 	List<Demandes> findByMariage();
 	
-	@Query("SELECT b FROM Demandes b WHERE b.id_deces not null")
+	@Query("SELECT b FROM Demandes b WHERE b.idDeces != NULL")
 	List<Demandes> findByDeces();
 	
 }

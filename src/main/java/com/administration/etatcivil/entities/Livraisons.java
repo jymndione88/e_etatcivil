@@ -14,9 +14,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -38,7 +36,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Livraisons.findByAdresse", query = "SELECT l FROM Livraisons l WHERE l.adresse = :adresse"),
     @NamedQuery(name = "Livraisons.findByBoiteEmail", query = "SELECT l FROM Livraisons l WHERE l.boiteEmail = :boiteEmail"),
     @NamedQuery(name = "Livraisons.findByBoitePostal", query = "SELECT l FROM Livraisons l WHERE l.boitePostal = :boitePostal"),
-    @NamedQuery(name = "Livraisons.findByIdLieu", query = "SELECT l FROM Livraisons l WHERE l.idLieu = :idLieu")})
+    @NamedQuery(name = "Livraisons.findByPays", query = "SELECT l FROM Livraisons l WHERE l.pays = :pays"),
+    @NamedQuery(name = "Livraisons.findByIdDemande", query = "SELECT l FROM Livraisons l WHERE l.idDemande = :idDemande"),
+    @NamedQuery(name = "Livraisons.findByIdDeclaraion", query = "SELECT l FROM Livraisons l WHERE l.idDeclaraion = :idDeclaraion"),
+    @NamedQuery(name = "Livraisons.findByIdModeLivraison", query = "SELECT l FROM Livraisons l WHERE l.idModeLivraison = :idModeLivraison")})
 public class Livraisons implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -47,7 +48,6 @@ public class Livraisons implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
-    @Basic(optional = false)
     @Column(name = "date")
     @Temporal(TemporalType.DATE)
     private Date date;
@@ -57,17 +57,18 @@ public class Livraisons implements Serializable {
     private String boiteEmail;
     @Column(name = "boite_postal")
     private String boitePostal;
+    @Column(name = "pays")
+    private String pays;
     @Lob
     @Column(name = "description")
     private String description;
-    @Column(name = "id_lieu")
-    private BigInteger idLieu;
-    @JoinColumn(name = "id_mode_livraison", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private ModeLivraison idModeLivraison;
-    @JoinColumn(name = "id_demande", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Demandes idDemande;
+    @Column(name = "id_demande")
+    private BigInteger idDemande;
+    @Column(name = "id_declaraion")
+    private BigInteger idDeclaraion;
+    @Basic(optional = false)
+    @Column(name = "id_mode_livraison")
+    private long idModeLivraison;
 
     public Livraisons() {
     }
@@ -76,9 +77,9 @@ public class Livraisons implements Serializable {
         this.id = id;
     }
 
-    public Livraisons(Long id, Date date) {
+    public Livraisons(Long id, long idModeLivraison) {
         this.id = id;
-        this.date = date;
+        this.idModeLivraison = idModeLivraison;
     }
 
     public Long getId() {
@@ -121,6 +122,14 @@ public class Livraisons implements Serializable {
         this.boitePostal = boitePostal;
     }
 
+    public String getPays() {
+        return pays;
+    }
+
+    public void setPays(String pays) {
+        this.pays = pays;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -129,28 +138,28 @@ public class Livraisons implements Serializable {
         this.description = description;
     }
 
-    public BigInteger getIdLieu() {
-        return idLieu;
-    }
-
-    public void setIdLieu(BigInteger idLieu) {
-        this.idLieu = idLieu;
-    }
-
-    public ModeLivraison getIdModeLivraison() {
-        return idModeLivraison;
-    }
-
-    public void setIdModeLivraison(ModeLivraison idModeLivraison) {
-        this.idModeLivraison = idModeLivraison;
-    }
-
-    public Demandes getIdDemande() {
+    public BigInteger getIdDemande() {
         return idDemande;
     }
 
-    public void setIdDemande(Demandes idDemande) {
+    public void setIdDemande(BigInteger idDemande) {
         this.idDemande = idDemande;
+    }
+
+    public BigInteger getIdDeclaraion() {
+        return idDeclaraion;
+    }
+
+    public void setIdDeclaraion(BigInteger idDeclaraion) {
+        this.idDeclaraion = idDeclaraion;
+    }
+
+    public long getIdModeLivraison() {
+        return idModeLivraison;
+    }
+
+    public void setIdModeLivraison(long idModeLivraison) {
+        this.idModeLivraison = idModeLivraison;
     }
 
     @Override

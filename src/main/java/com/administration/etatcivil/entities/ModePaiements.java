@@ -6,9 +6,7 @@
 package com.administration.etatcivil.entities;
 
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,10 +14,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -32,8 +28,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "ModePaiements.findAll", query = "SELECT m FROM ModePaiements m"),
     @NamedQuery(name = "ModePaiements.findById", query = "SELECT m FROM ModePaiements m WHERE m.id = :id"),
     @NamedQuery(name = "ModePaiements.findByMode", query = "SELECT m FROM ModePaiements m WHERE m.mode = :mode"),
-    @NamedQuery(name = "ModePaiements.findByOperateur", query = "SELECT m FROM ModePaiements m WHERE m.operateur = :operateur"),
-    @NamedQuery(name = "ModePaiements.findByCodeTransaction", query = "SELECT m FROM ModePaiements m WHERE m.codeTransaction = :codeTransaction")})
+    @NamedQuery(name = "ModePaiements.findByCodeTransaction", query = "SELECT m FROM ModePaiements m WHERE m.codeTransaction = :codeTransaction"),
+    @NamedQuery(name = "ModePaiements.findByOperateur", query = "SELECT m FROM ModePaiements m WHERE m.operateur = :operateur")})
 public class ModePaiements implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -46,13 +42,11 @@ public class ModePaiements implements Serializable {
     @Column(name = "mode")
     private String mode;
     @Basic(optional = false)
-    @Column(name = "operateur")
-    private String operateur;
-    @Basic(optional = false)
     @Column(name = "code_transaction")
     private int codeTransaction;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idModePaiement")
-    private List<Paiements> paiementsList;
+    @Basic(optional = false)
+    @Column(name = "operateur")
+    private String operateur;
 
     public ModePaiements() {
     }
@@ -61,11 +55,11 @@ public class ModePaiements implements Serializable {
         this.id = id;
     }
 
-    public ModePaiements(Long id, String mode, String operateur, int codeTransaction) {
+    public ModePaiements(Long id, String mode, int codeTransaction, String operateur) {
         this.id = id;
         this.mode = mode;
-        this.operateur = operateur;
         this.codeTransaction = codeTransaction;
+        this.operateur = operateur;
     }
 
     public Long getId() {
@@ -84,14 +78,6 @@ public class ModePaiements implements Serializable {
         this.mode = mode;
     }
 
-    public String getOperateur() {
-        return operateur;
-    }
-
-    public void setOperateur(String operateur) {
-        this.operateur = operateur;
-    }
-
     public int getCodeTransaction() {
         return codeTransaction;
     }
@@ -100,13 +86,12 @@ public class ModePaiements implements Serializable {
         this.codeTransaction = codeTransaction;
     }
 
-    @XmlTransient
-    public List<Paiements> getPaiementsList() {
-        return paiementsList;
+    public String getOperateur() {
+        return operateur;
     }
 
-    public void setPaiementsList(List<Paiements> paiementsList) {
-        this.paiementsList = paiementsList;
+    public void setOperateur(String operateur) {
+        this.operateur = operateur;
     }
 
     @Override

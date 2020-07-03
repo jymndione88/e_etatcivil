@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +26,8 @@ import com.administration.etatcivil.entities.TypeEtatcivil;
 import com.administration.etatcivil.repositories.ArrondissementRepository;
 
 
-@CrossOrigin("http://localhost:4200")
+//@CrossOrigin("http://localhost:4200")
+@CrossOrigin(origins ="*", allowedHeaders = "*")
 @RequestMapping(value= "/api")
 @RestController
 public class ArrondissementController {
@@ -33,11 +36,6 @@ public class ArrondissementController {
 	@Autowired
 	private ArrondissementRepository metier;
 	
-	@RequestMapping(value= "/")
-	public String home(){
-		return "ok";
-	}
-	                      
     @RequestMapping(value= "/arrondissement", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
@@ -46,7 +44,7 @@ public class ArrondissementController {
     	
     	if (arrondissements == null || arrondissements.isEmpty()){
     		//erreur 204
-            return new ResponseEntity<List<Arrondissements>>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<List<Arrondissements>>(HttpStatus.NOT_FOUND);
         }else{
         	
         	return new ResponseEntity<List<Arrondissements>>(arrondissements, HttpStatus.OK);
@@ -57,47 +55,53 @@ public class ArrondissementController {
 	
     @RequestMapping(value= "/arrondissement", method= RequestMethod.POST)
     @ResponseBody
-	public Arrondissements addArrondissement(@RequestBody Arrondissements arron, HttpServletResponse response){
+	public ResponseEntity<?>  addArrondissement(@RequestBody Arrondissements arron){
 
     	//Si l'arron n'existe pas déja
-    	//if(!metier.findByNumero(arron.getCode()).isPresent()){
-    		//return metier.save(arron);
-    	//}else {
-    		//throw new ResponseStatusException(HttpStatus.FORBIDDEN, "arrondissement existe déjà");
-    	//}
-      return null;
+    	if(metier.findByCode(arron.getCode())!= null){
+    		 metier.save(arron);
+    		 return new ResponseEntity<>(arron, HttpStatus.CREATED);
+    	}else {
+    		
+    		return new ResponseEntity<>("arrondissement existe déjà", HttpStatus.CONFLICT);
+    	}
+     
 	}
     
     @RequestMapping(value= "/arrondissement/{id}", method= RequestMethod.PUT)
     @ResponseBody
-	public Arrondissements updateArrondissement(@PathVariable("id") Long id, @RequestBody Arrondissements arron){
+	public ResponseEntity<?> updateArrondissement(@PathVariable("id") Long id, @RequestBody Arrondissements arron){
 
 Optional<Arrondissements> optionalart = metier.findById(id);
     	
-        if (optionalart.isPresent()){
-        	
-        	Arrondissements art = optionalart.get();
-        	art.setLibelle(arron.getLibelle());
-        	return metier.save(art);
+        if (optionalart== null){
+          	 return new ResponseEntity<>("arrondissement non trouvé", HttpStatus.NOT_FOUND);
         	
         }else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "arrondissement non trouvé");
+
+        	Arrondissements art = optionalart.get();
+        	art.setCode(arron.getCode());
+        	art.setLibelle(arron.getLibelle());
+        	art.setIdDepartement(arron.getIdDepartement());
+        	
+        	 metier.save(art);
+        	 return new ResponseEntity<>(art, HttpStatus.OK);
+        	
 		}
 	}
     
     @RequestMapping(value= "/arrondissement/{id}", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
-    public Arrondissements getArrondissementById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getArrondissementById(@PathVariable("id") Long id) {
 
     	Optional<Arrondissements> optionalart = metier.findById(id);
 
-    	if (optionalart.isPresent()){
+    	if (optionalart== null){
+    		return new ResponseEntity<>("arrondissement non trouvé", HttpStatus.NOT_FOUND);
             
-    		Arrondissements art = optionalart.get();
-    		return art;
     	}else { 
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "arrondissement non trouvé");
+    		return new ResponseEntity<>(optionalart, HttpStatus.OK);
 		}
     }
     
@@ -107,7 +111,7 @@ Optional<Arrondissements> optionalart = metier.findById(id);
 
     	Optional<Arrondissements> optionalart  = metier.findById(id);
 
-        if (!optionalart.isPresent()){
+        if (optionalart== null){
             return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
         }else{
 
