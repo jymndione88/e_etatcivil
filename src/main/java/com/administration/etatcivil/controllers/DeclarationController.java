@@ -114,12 +114,12 @@ Optional<Declarations> optionalart = metier.findById(id);
     }
     
    // @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    @RequestMapping(value= "/declaration/{id}/{num}", method= RequestMethod.GET,
+    @RequestMapping(value= "/declaration/{id}/{numero}", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
-    public ResponseEntity<?> getDeclarationByNum(@PathVariable("id") Long id, @PathVariable("num") String num) {
-
-    	Optional<Declarations> optionalart = metier.findByNum(num);
+    public ResponseEntity<?> getDeclarationByNum(@PathVariable("id") Long id, @PathVariable("numero") String numero) {
+    	
+    	Optional<Declarations> optionalart = metier.findByNum(numero);
 
     	if (optionalart== null){
     		return new ResponseEntity<>("declaration non trouvé", HttpStatus.NOT_FOUND);

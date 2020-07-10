@@ -12,7 +12,7 @@ import com.administration.etatcivil.entities.Naissances;
 
 public interface NaissanceRepository extends JpaRepository<Naissances, Long> {
 
-	@Query("SELECT b FROM Naissances b WHERE b.idDeclaration = :num")
+	@Query("SELECT b FROM Naissances b WHERE b.idDeclaration.id = :num")
 	Optional<Naissances> findByDeclaration(Long num);
 	
 	 // @Query("SELECT u FROM User u WHERE u.status = ?1 and u.name = ?2") 

@@ -79,8 +79,7 @@ public class CommuneController {
         	Communes art = optionalart.get();
         	art.setCode(com.getCode());
         	art.setLibelle(com.getLibelle());
-        	art.setIdArrondissement(com.getIdArrondissement());
-        	art.setIdTypeCommune(com.getIdTypeCommune());
+        	art.setIdDepartement(com.getIdDepartement());
         	
         	 metier.save(art);
         	 return new ResponseEntity<>(art, HttpStatus.OK);

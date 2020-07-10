@@ -6,7 +6,9 @@
 package com.administration.etatcivil.entities;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,8 +16,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
@@ -27,9 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "ModePaiements.findAll", query = "SELECT m FROM ModePaiements m"),
     @NamedQuery(name = "ModePaiements.findById", query = "SELECT m FROM ModePaiements m WHERE m.id = :id"),
-    @NamedQuery(name = "ModePaiements.findByMode", query = "SELECT m FROM ModePaiements m WHERE m.mode = :mode"),
-    @NamedQuery(name = "ModePaiements.findByCodeTransaction", query = "SELECT m FROM ModePaiements m WHERE m.codeTransaction = :codeTransaction"),
-    @NamedQuery(name = "ModePaiements.findByOperateur", query = "SELECT m FROM ModePaiements m WHERE m.operateur = :operateur")})
+    @NamedQuery(name = "ModePaiements.findByMode", query = "SELECT m FROM ModePaiements m WHERE m.mode = :mode")})
 public class ModePaiements implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -41,12 +45,9 @@ public class ModePaiements implements Serializable {
     @Basic(optional = false)
     @Column(name = "mode")
     private String mode;
-    @Basic(optional = false)
-    @Column(name = "code_transaction")
-    private int codeTransaction;
-    @Basic(optional = false)
-    @Column(name = "operateur")
-    private String operateur;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idModePaiement")
+    @JsonIgnore
+    private List<Paiements> paiementsList;
 
     public ModePaiements() {
     }
@@ -55,11 +56,9 @@ public class ModePaiements implements Serializable {
         this.id = id;
     }
 
-    public ModePaiements(Long id, String mode, int codeTransaction, String operateur) {
+    public ModePaiements(Long id, String mode) {
         this.id = id;
         this.mode = mode;
-        this.codeTransaction = codeTransaction;
-        this.operateur = operateur;
     }
 
     public Long getId() {
@@ -78,20 +77,13 @@ public class ModePaiements implements Serializable {
         this.mode = mode;
     }
 
-    public int getCodeTransaction() {
-        return codeTransaction;
+    @XmlTransient
+    public List<Paiements> getPaiementsList() {
+        return paiementsList;
     }
 
-    public void setCodeTransaction(int codeTransaction) {
-        this.codeTransaction = codeTransaction;
-    }
-
-    public String getOperateur() {
-        return operateur;
-    }
-
-    public void setOperateur(String operateur) {
-        this.operateur = operateur;
+    public void setPaiementsList(List<Paiements> paiementsList) {
+        this.paiementsList = paiementsList;
     }
 
     @Override

@@ -6,7 +6,6 @@
 package com.administration.etatcivil.entities;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
@@ -15,7 +14,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -37,19 +38,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @NamedQueries({
     @NamedQuery(name = "Naissances.findAll", query = "SELECT n FROM Naissances n"),
     @NamedQuery(name = "Naissances.findById", query = "SELECT n FROM Naissances n WHERE n.id = :id"),
-    @NamedQuery(name = "Naissances.findByGenre", query = "SELECT n FROM Naissances n WHERE n.genre = :genre"),
-    @NamedQuery(name = "Naissances.findByNom", query = "SELECT n FROM Naissances n WHERE n.nom = :nom"),
-    @NamedQuery(name = "Naissances.findByPrenom", query = "SELECT n FROM Naissances n WHERE n.prenom = :prenom"),
     @NamedQuery(name = "Naissances.findByDatenaiss", query = "SELECT n FROM Naissances n WHERE n.datenaiss = :datenaiss"),
+    @NamedQuery(name = "Naissances.findByGenre", query = "SELECT n FROM Naissances n WHERE n.genre = :genre"),
     @NamedQuery(name = "Naissances.findByHeurenaiss", query = "SELECT n FROM Naissances n WHERE n.heurenaiss = :heurenaiss"),
-    @NamedQuery(name = "Naissances.findByNomPere", query = "SELECT n FROM Naissances n WHERE n.nomPere = :nomPere"),
-    @NamedQuery(name = "Naissances.findByPrenomPere", query = "SELECT n FROM Naissances n WHERE n.prenomPere = :prenomPere"),
+    @NamedQuery(name = "Naissances.findByNom", query = "SELECT n FROM Naissances n WHERE n.nom = :nom"),
     @NamedQuery(name = "Naissances.findByNomMere", query = "SELECT n FROM Naissances n WHERE n.nomMere = :nomMere"),
+    @NamedQuery(name = "Naissances.findByNomPere", query = "SELECT n FROM Naissances n WHERE n.nomPere = :nomPere"),
+    @NamedQuery(name = "Naissances.findByPrenom", query = "SELECT n FROM Naissances n WHERE n.prenom = :prenom"),
     @NamedQuery(name = "Naissances.findByPrenomMere", query = "SELECT n FROM Naissances n WHERE n.prenomMere = :prenomMere"),
-    @NamedQuery(name = "Naissances.findByIdJugement", query = "SELECT n FROM Naissances n WHERE n.idJugement = :idJugement"),
-    @NamedQuery(name = "Naissances.findByIdDeclaration", query = "SELECT n FROM Naissances n WHERE n.idDeclaration = :idDeclaration"),
-    @NamedQuery(name = "Naissances.findByIdLieuHospitalier", query = "SELECT n FROM Naissances n WHERE n.idLieuHospitalier = :idLieuHospitalier"),
-    @NamedQuery(name = "Naissances.findByLieunaiss", query = "SELECT n FROM Naissances n WHERE n.lieunaiss = :lieunaiss")})
+    @NamedQuery(name = "Naissances.findByPrenomPere", query = "SELECT n FROM Naissances n WHERE n.prenomPere = :prenomPere")})
 public class Naissances implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -59,48 +56,46 @@ public class Naissances implements Serializable {
     @Column(name = "id")
     private Long id;
     @Basic(optional = false)
-    @Column(name = "genre")
-    private Character genre;
-    @Basic(optional = false)
-    @Column(name = "nom")
-    private String nom;
-    @Basic(optional = false)
-    @Column(name = "prenom")
-    private String prenom;
-    @Basic(optional = false)
     @Column(name = "datenaiss")
     @Temporal(TemporalType.DATE)
     private Date datenaiss;
     @Basic(optional = false)
+    @Column(name = "genre")
+    private Character genre;
+    @Basic(optional = false)
     @Column(name = "heurenaiss")
     @Temporal(TemporalType.TIME)
     private Date heurenaiss;
+    @Lob
+    @Column(name = "mention_marginal")
+    private String mentionMarginal;
     @Basic(optional = false)
-    @Column(name = "nom_pere")
-    private String nomPere;
-    @Basic(optional = false)
-    @Column(name = "prenom_pere")
-    private String prenomPere;
+    @Column(name = "nom")
+    private String nom;
     @Basic(optional = false)
     @Column(name = "nom_mere")
     private String nomMere;
     @Basic(optional = false)
+    @Column(name = "nom_pere")
+    private String nomPere;
+    @Basic(optional = false)
+    @Column(name = "prenom")
+    private String prenom;
+    @Basic(optional = false)
     @Column(name = "prenom_mere")
     private String prenomMere;
-    @Lob
-    @Column(name = "mention_marginal")
-    private String mentionMarginal;
-    @Column(name = "id_jugement")
-    private BigInteger idJugement;
     @Basic(optional = false)
-    @Column(name = "id_declaration")
-    private long idDeclaration;
-    @Basic(optional = false)
-    @Column(name = "id_lieu_hospitalier")
-    private long idLieuHospitalier;
-    @Basic(optional = false)
-    @Column(name = "lieunaiss")
-    private String lieunaiss;
+    @Column(name = "prenom_pere")
+    private String prenomPere;
+    @JoinColumn(name = "id_declaration", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Declarations idDeclaration;
+    @JoinColumn(name = "id_lieu_hospitalier", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private LieuHospitalier idLieuHospitalier;
+    @JoinColumn(name = "id_jugement", referencedColumnName = "id")
+    @ManyToOne
+    private Jugements idJugement;
     @OneToMany(mappedBy = "idNaissance")
     @JsonIgnore
     private List<Demandes> demandesList;
@@ -112,20 +107,17 @@ public class Naissances implements Serializable {
         this.id = id;
     }
 
-    public Naissances(Long id, Character genre, String nom, String prenom, Date datenaiss, Date heurenaiss, String nomPere, String prenomPere, String nomMere, String prenomMere, long idDeclaration, long idLieuHospitalier, String lieunaiss) {
+    public Naissances(Long id, Date datenaiss, Character genre, Date heurenaiss, String nom, String nomMere, String nomPere, String prenom, String prenomMere, String prenomPere) {
         this.id = id;
-        this.genre = genre;
-        this.nom = nom;
-        this.prenom = prenom;
         this.datenaiss = datenaiss;
+        this.genre = genre;
         this.heurenaiss = heurenaiss;
-        this.nomPere = nomPere;
-        this.prenomPere = prenomPere;
+        this.nom = nom;
         this.nomMere = nomMere;
+        this.nomPere = nomPere;
+        this.prenom = prenom;
         this.prenomMere = prenomMere;
-        this.idDeclaration = idDeclaration;
-        this.idLieuHospitalier = idLieuHospitalier;
-        this.lieunaiss = lieunaiss;
+        this.prenomPere = prenomPere;
     }
 
     public Long getId() {
@@ -136,36 +128,20 @@ public class Naissances implements Serializable {
         this.id = id;
     }
 
-    public Character getGenre() {
-        return genre;
-    }
-
-    public void setGenre(Character genre) {
-        this.genre = genre;
-    }
-
-    public String getNom() {
-        return nom;
-    }
-
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
-    public String getPrenom() {
-        return prenom;
-    }
-
-    public void setPrenom(String prenom) {
-        this.prenom = prenom;
-    }
-
     public Date getDatenaiss() {
         return datenaiss;
     }
 
     public void setDatenaiss(Date datenaiss) {
         this.datenaiss = datenaiss;
+    }
+
+    public Character getGenre() {
+        return genre;
+    }
+
+    public void setGenre(Character genre) {
+        this.genre = genre;
     }
 
     public Date getHeurenaiss() {
@@ -176,20 +152,20 @@ public class Naissances implements Serializable {
         this.heurenaiss = heurenaiss;
     }
 
-    public String getNomPere() {
-        return nomPere;
+    public String getMentionMarginal() {
+        return mentionMarginal;
     }
 
-    public void setNomPere(String nomPere) {
-        this.nomPere = nomPere;
+    public void setMentionMarginal(String mentionMarginal) {
+        this.mentionMarginal = mentionMarginal;
     }
 
-    public String getPrenomPere() {
-        return prenomPere;
+    public String getNom() {
+        return nom;
     }
 
-    public void setPrenomPere(String prenomPere) {
-        this.prenomPere = prenomPere;
+    public void setNom(String nom) {
+        this.nom = nom;
     }
 
     public String getNomMere() {
@@ -200,6 +176,22 @@ public class Naissances implements Serializable {
         this.nomMere = nomMere;
     }
 
+    public String getNomPere() {
+        return nomPere;
+    }
+
+    public void setNomPere(String nomPere) {
+        this.nomPere = nomPere;
+    }
+
+    public String getPrenom() {
+        return prenom;
+    }
+
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
+    }
+
     public String getPrenomMere() {
         return prenomMere;
     }
@@ -208,44 +200,36 @@ public class Naissances implements Serializable {
         this.prenomMere = prenomMere;
     }
 
-    public String getMentionMarginal() {
-        return mentionMarginal;
+    public String getPrenomPere() {
+        return prenomPere;
     }
 
-    public void setMentionMarginal(String mentionMarginal) {
-        this.mentionMarginal = mentionMarginal;
+    public void setPrenomPere(String prenomPere) {
+        this.prenomPere = prenomPere;
     }
 
-    public BigInteger getIdJugement() {
-        return idJugement;
-    }
-
-    public void setIdJugement(BigInteger idJugement) {
-        this.idJugement = idJugement;
-    }
-
-    public long getIdDeclaration() {
+    public Declarations getIdDeclaration() {
         return idDeclaration;
     }
 
-    public void setIdDeclaration(long idDeclaration) {
+    public void setIdDeclaration(Declarations idDeclaration) {
         this.idDeclaration = idDeclaration;
     }
 
-    public long getIdLieuHospitalier() {
+    public LieuHospitalier getIdLieuHospitalier() {
         return idLieuHospitalier;
     }
 
-    public void setIdLieuHospitalier(long idLieuHospitalier) {
+    public void setIdLieuHospitalier(LieuHospitalier idLieuHospitalier) {
         this.idLieuHospitalier = idLieuHospitalier;
     }
 
-    public String getLieunaiss() {
-        return lieunaiss;
+    public Jugements getIdJugement() {
+        return idJugement;
     }
 
-    public void setLieunaiss(String lieunaiss) {
-        this.lieunaiss = lieunaiss;
+    public void setIdJugement(Jugements idJugement) {
+        this.idJugement = idJugement;
     }
 
     @XmlTransient

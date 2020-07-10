@@ -39,8 +39,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @NamedQueries({
     @NamedQuery(name = "Declarations.findAll", query = "SELECT d FROM Declarations d"),
     @NamedQuery(name = "Declarations.findById", query = "SELECT d FROM Declarations d WHERE d.id = :id"),
-    @NamedQuery(name = "Declarations.findByNumero", query = "SELECT d FROM Declarations d WHERE d.numero = :numero"),
     @NamedQuery(name = "Declarations.findByDate", query = "SELECT d FROM Declarations d WHERE d.date = :date"),
+    @NamedQuery(name = "Declarations.findByNumero", query = "SELECT d FROM Declarations d WHERE d.numero = :numero"),
     @NamedQuery(name = "Declarations.findByQualiteDeclarant", query = "SELECT d FROM Declarations d WHERE d.qualiteDeclarant = :qualiteDeclarant"),
     @NamedQuery(name = "Declarations.findByStatut", query = "SELECT d FROM Declarations d WHERE d.statut = :statut")})
 public class Declarations implements Serializable {
@@ -51,24 +51,30 @@ public class Declarations implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
-    @Basic(optional = false)
-    @Column(name = "numero")
-    private String numero;
+    @Lob
+    @Column(name = "commentaire")
+    private String commentaire;
     @Basic(optional = false)
     @Column(name = "date")
     @Temporal(TemporalType.DATE)
     private Date date;
     @Basic(optional = false)
+    @Column(name = "numero")
+    private String numero;
+    @Basic(optional = false)
     @Column(name = "qualite_declarant")
     private String qualiteDeclarant;
     @Column(name = "statut")
     private Boolean statut;
-    @Lob
-    @Column(name = "commentaire")
-    private String commentaire;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDeclaration")
     @JsonIgnore
     private List<Deces> decesList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDeclaration")
+    @JsonIgnore
+    private List<Naissances> naissancesList;
+    @OneToMany(mappedBy = "idDeclaraion")
+    @JsonIgnore
+    private List<Livraisons> livraisonsList;
     @OneToMany(mappedBy = "idDeclaration")
     @JsonIgnore
     private List<Factures> facturesList;
@@ -86,10 +92,10 @@ public class Declarations implements Serializable {
         this.id = id;
     }
 
-    public Declarations(Long id, String numero, Date date, String qualiteDeclarant) {
+    public Declarations(Long id, Date date, String numero, String qualiteDeclarant) {
         this.id = id;
-        this.numero = numero;
         this.date = date;
+        this.numero = numero;
         this.qualiteDeclarant = qualiteDeclarant;
     }
 
@@ -101,12 +107,12 @@ public class Declarations implements Serializable {
         this.id = id;
     }
 
-    public String getNumero() {
-        return numero;
+    public String getCommentaire() {
+        return commentaire;
     }
 
-    public void setNumero(String numero) {
-        this.numero = numero;
+    public void setCommentaire(String commentaire) {
+        this.commentaire = commentaire;
     }
 
     public Date getDate() {
@@ -115,6 +121,14 @@ public class Declarations implements Serializable {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public String getNumero() {
+        return numero;
+    }
+
+    public void setNumero(String numero) {
+        this.numero = numero;
     }
 
     public String getQualiteDeclarant() {
@@ -133,14 +147,6 @@ public class Declarations implements Serializable {
         this.statut = statut;
     }
 
-    public String getCommentaire() {
-        return commentaire;
-    }
-
-    public void setCommentaire(String commentaire) {
-        this.commentaire = commentaire;
-    }
-
     @XmlTransient
     public List<Deces> getDecesList() {
         return decesList;
@@ -148,6 +154,24 @@ public class Declarations implements Serializable {
 
     public void setDecesList(List<Deces> decesList) {
         this.decesList = decesList;
+    }
+
+    @XmlTransient
+    public List<Naissances> getNaissancesList() {
+        return naissancesList;
+    }
+
+    public void setNaissancesList(List<Naissances> naissancesList) {
+        this.naissancesList = naissancesList;
+    }
+
+    @XmlTransient
+    public List<Livraisons> getLivraisonsList() {
+        return livraisonsList;
+    }
+
+    public void setLivraisonsList(List<Livraisons> livraisonsList) {
+        this.livraisonsList = livraisonsList;
     }
 
     @XmlTransient

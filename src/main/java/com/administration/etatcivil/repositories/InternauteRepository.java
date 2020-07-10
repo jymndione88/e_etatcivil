@@ -22,6 +22,10 @@ public interface InternauteRepository extends JpaRepository<Internautes, Long>{
 	@Query("SELECT u.login FROM Internautes u WHERE u.email = :email")
 	String findLoginByEmail(String email);
 	
+	@Query("SELECT COUNT(u) FROM InternauteRoles u WHERE u.idRole = 2")
+	Integer findListCompte();
+	
+	
 	//@Query("SELECT p FROM personnes p INNER JOIN p.internautesList i WHERE i.email = :email")
 	//Personnes getPersonneByEmail(@Param("email") String email);
 	

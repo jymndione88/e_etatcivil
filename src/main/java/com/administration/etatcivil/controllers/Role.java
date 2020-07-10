@@ -19,97 +19,99 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.administration.etatcivil.entities.RoleOfficiers;
+import com.administration.etatcivil.entities.Regions;
+import com.administration.etatcivil.entities.Roles;
 import com.administration.etatcivil.entities.TypeEtatcivil;
-import com.administration.etatcivil.repositories.RoleOfficierRepository;
+import com.administration.etatcivil.repositories.RegionRepository;
+import com.administration.etatcivil.repositories.RoleRepository;
+
 
 //@CrossOrigin("http://localhost:4200")
 @CrossOrigin(origins ="*", allowedHeaders = "*")
 @RequestMapping(value= "/api")
 @RestController
-public class RoleOfficierController {
+public class Role {
 
 	@Autowired
-	private RoleOfficierRepository metier;
+	private RoleRepository metier;
 	                      
-    @RequestMapping(value= "/roleofficier", method= RequestMethod.GET,
+    @RequestMapping(value= "/role", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
-	public ResponseEntity<List<RoleOfficiers>> getListRoleOfficier(){
-    	List<RoleOfficiers> con= metier.findAll();	
+	public ResponseEntity<List<Roles>> getListRoles(){
+    	List<Roles> con= metier.findAll();	
 
     	if (con == null || con.isEmpty()){
     		//erreur 204
-            return new ResponseEntity<List<RoleOfficiers>>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<List<Roles>>(HttpStatus.NOT_FOUND);
         }else{
-        	
-        	return new ResponseEntity<List<RoleOfficiers>>(con, HttpStatus.OK);
+
+        	return new ResponseEntity<List<Roles>>(con, HttpStatus.OK);
         }
 
-    	
 	}
 	
-    @RequestMapping(value= "/roleofficier", method= RequestMethod.POST)
+    @RequestMapping(value= "/role", method= RequestMethod.POST)
     @ResponseBody
-	public ResponseEntity<?> addRoleOfficier(@RequestBody RoleOfficiers con){
+	public ResponseEntity<?> addRoles(@RequestBody Roles con){
 
     	//Si l'con n'existe pas déja
-    	if(metier.findByRole(con.getRole())!= null){
+    	if(metier.findByCode(con.getCode())!= null){
     		 metier.save(con);
-    	 	return new ResponseEntity<>(con, HttpStatus.CREATED);
+    	 		return new ResponseEntity<>(con, HttpStatus.CREATED);
     	}else {
-    		
-    		return new ResponseEntity<>("RoleOfficier existe déjà", HttpStatus.CONFLICT);
+    	
+    		return new ResponseEntity<>("Roles existe déjà", HttpStatus.CONFLICT);
     	}
     	
 	}
     
-    @RequestMapping(value= "/roleofficier/{id}", method= RequestMethod.PUT)
+    @RequestMapping(value= "/role/{id}", method= RequestMethod.PUT)
     @ResponseBody
-	public ResponseEntity<?> updateRoleOfficier(@PathVariable("id") Long id, @RequestBody RoleOfficiers con){
+	public ResponseEntity<?> updateRoles(@PathVariable("id") Long id, @RequestBody Roles con){
 
-Optional<RoleOfficiers> optionalart = metier.findById(id);
+Optional<Roles> optionalart = metier.findById(id);
     	
         if (optionalart== null){
-          	 return new ResponseEntity<>("RoleOfficier non trouvé", HttpStatus.NOT_FOUND);
+          	 return new ResponseEntity<>("Roles non trouvé", HttpStatus.NOT_FOUND);
         	
         }else { 
-		
-        	RoleOfficiers art = optionalart.get();
-        	art.setRole(con.getRole());
+
+        	Roles art = optionalart.get();
+        	art.setCode(con.getCode());
+        	art.setLibelle(con.getLibelle());
         	 metier.save(art);
         	return new ResponseEntity<>(art, HttpStatus.OK);
         	
 		}
-       
+        
 	}
     
-    @RequestMapping(value= "/roleofficier/{id}", method= RequestMethod.GET,
+    @RequestMapping(value= "/role/{id}", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
-    public ResponseEntity<?> getRoleOfficierById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getRolesById(@PathVariable("id") Long id) {
 
-    	Optional<RoleOfficiers> optionalart = metier.findById(id);
+    	Optional<Roles> optionalart = metier.findById(id);
 
     	if (optionalart== null){
-    		return new ResponseEntity<>("RoleOfficier non trouvé", HttpStatus.NOT_FOUND);
+    		return new ResponseEntity<>("Role non trouvé", HttpStatus.NOT_FOUND);
     	}else { 
     		return new ResponseEntity<>(optionalart, HttpStatus.OK);
 		}
-
     }
     
-    @RequestMapping(value= "/roleofficier/{id}", method= RequestMethod.DELETE)
+    @RequestMapping(value= "/role/{id}", method= RequestMethod.DELETE)
     @ResponseBody
-   	public ResponseEntity<Void> deleteRoleOfficier(@PathVariable("id") Long id){
+   	public ResponseEntity<Void> deleteRoles(@PathVariable("id") Long id){
 
-    	Optional<RoleOfficiers> optionalart  = metier.findById(id);
+    	Optional<Roles> optionalart  = metier.findById(id);
 
         if (optionalart== null){
             return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
         }else{
 
-        	RoleOfficiers art = optionalart.get();
+        	Roles art = optionalart.get();
     		metier.delete(art);
             return new ResponseEntity<Void>(HttpStatus.OK);
         }

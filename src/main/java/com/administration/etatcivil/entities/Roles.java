@@ -42,7 +42,7 @@ public class Roles implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
-    private Integer id;
+    private Long id;
     @Basic(optional = false)
     @Column(name = "code")
     private String code;
@@ -56,21 +56,21 @@ public class Roles implements Serializable {
     public Roles() {
     }
 
-    public Roles(Integer id) {
+    public Roles(Long id) {
         this.id = id;
     }
 
-    public Roles(Integer id, String code, String libelle) {
+    public Roles(Long id, String code, String libelle) {
         this.id = id;
         this.code = code;
         this.libelle = libelle;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

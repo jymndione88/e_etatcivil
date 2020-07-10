@@ -6,7 +6,9 @@
 package com.administration.etatcivil.entities;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,8 +16,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
@@ -39,6 +45,9 @@ public class ModeLivraison implements Serializable {
     @Basic(optional = false)
     @Column(name = "mode")
     private String mode;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idModeLivraison")
+    @JsonIgnore
+    private List<Livraisons> livraisonsList;
 
     public ModeLivraison() {
     }
@@ -66,6 +75,15 @@ public class ModeLivraison implements Serializable {
 
     public void setMode(String mode) {
         this.mode = mode;
+    }
+
+    @XmlTransient
+    public List<Livraisons> getLivraisonsList() {
+        return livraisonsList;
+    }
+
+    public void setLivraisonsList(List<Livraisons> livraisonsList) {
+        this.livraisonsList = livraisonsList;
     }
 
     @Override

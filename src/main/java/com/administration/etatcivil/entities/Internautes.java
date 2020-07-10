@@ -68,35 +68,38 @@ public class Internautes implements Serializable {
     @Basic(optional = false)
     @Column(name = "active")
     private boolean active;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idInternaute")
-    @JsonIgnore
-    private List<InternauteRoles> internauteRolesList;
     @JoinColumn(name = "id_personne", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Personnes idPersonne;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idInternaute")
     @JsonIgnore
+    private List<InternauteRoles> internauteRolesList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idInternaute")
+    @JsonIgnore
     private List<Declarations> declarationsList;
-
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idInternaute")
+    @JsonIgnore
+    private List<Officiers> officiersList;
+    
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "internaute_roles",
             joinColumns = @JoinColumn(name = "id_internaute", referencedColumnName="id"),
             inverseJoinColumns = @JoinColumn(name = "id_role", referencedColumnName="id"))
     private Set<Roles> roles;
-    
+
     public Internautes() {
     }
 
     public Internautes(Long id) {
         this.id = id;
     }
-    
+
     public Internautes(String login, String email, String password) {
         this.login = login;
         this.email = email;
         this.password = password;
     }
-
+    
     public Internautes(Long id, String login, String email, String password, String resetPassword, boolean active) {
         this.id = id;
         this.login = login;
@@ -105,7 +108,7 @@ public class Internautes implements Serializable {
         this.resetPassword = resetPassword;
         this.active = active;
     }
-
+    
     public Set<Roles> getRoles() {
         return roles;
     }
@@ -113,11 +116,12 @@ public class Internautes implements Serializable {
     public void setRoles(Set<Roles> roles) {
         this.roles = roles;
     }
-    
+
     public Long getId() {
         return id;
     }
 
+    
     public void setId(Long id) {
         this.id = id;
     }
@@ -162,15 +166,6 @@ public class Internautes implements Serializable {
         this.active = active;
     }
 
-    @XmlTransient
-    public List<InternauteRoles> getInternauteRolesList() {
-        return internauteRolesList;
-    }
-
-    public void setInternauteRolesList(List<InternauteRoles> internauteRolesList) {
-        this.internauteRolesList = internauteRolesList;
-    }
-
     public Personnes getIdPersonne() {
         return idPersonne;
     }
@@ -180,12 +175,30 @@ public class Internautes implements Serializable {
     }
 
     @XmlTransient
+    public List<InternauteRoles> getInternauteRolesList() {
+        return internauteRolesList;
+    }
+
+    public void setInternauteRolesList(List<InternauteRoles> internauteRolesList) {
+        this.internauteRolesList = internauteRolesList;
+    }
+
+    @XmlTransient
     public List<Declarations> getDeclarationsList() {
         return declarationsList;
     }
 
     public void setDeclarationsList(List<Declarations> declarationsList) {
         this.declarationsList = declarationsList;
+    }
+
+    @XmlTransient
+    public List<Officiers> getOfficiersList() {
+        return officiersList;
+    }
+
+    public void setOfficiersList(List<Officiers> officiersList) {
+        this.officiersList = officiersList;
     }
 
     @Override

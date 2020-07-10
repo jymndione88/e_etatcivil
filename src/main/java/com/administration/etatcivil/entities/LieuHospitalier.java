@@ -8,13 +8,12 @@ package com.administration.etatcivil.entities;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -53,9 +52,9 @@ public class LieuHospitalier implements Serializable {
     @OneToMany(mappedBy = "idLieuHospitalier")
     @JsonIgnore
     private List<Deces> decesList;
-    @JoinColumn(name = "id_etat_civil", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private EtatCivils idEtatCivil;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idLieuHospitalier")
+    @JsonIgnore
+    private List<Naissances> naissancesList;
 
     public LieuHospitalier() {
     }
@@ -103,12 +102,13 @@ public class LieuHospitalier implements Serializable {
         this.decesList = decesList;
     }
 
-    public EtatCivils getIdEtatCivil() {
-        return idEtatCivil;
+    @XmlTransient
+    public List<Naissances> getNaissancesList() {
+        return naissancesList;
     }
 
-    public void setIdEtatCivil(EtatCivils idEtatCivil) {
-        this.idEtatCivil = idEtatCivil;
+    public void setNaissancesList(List<Naissances> naissancesList) {
+        this.naissancesList = naissancesList;
     }
 
     @Override

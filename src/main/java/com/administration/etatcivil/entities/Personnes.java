@@ -36,13 +36,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @NamedQueries({
     @NamedQuery(name = "Personnes.findAll", query = "SELECT p FROM Personnes p"),
     @NamedQuery(name = "Personnes.findById", query = "SELECT p FROM Personnes p WHERE p.id = :id"),
-    @NamedQuery(name = "Personnes.findByNom", query = "SELECT p FROM Personnes p WHERE p.nom = :nom"),
-    @NamedQuery(name = "Personnes.findByPrenom", query = "SELECT p FROM Personnes p WHERE p.prenom = :prenom"),
+    @NamedQuery(name = "Personnes.findByAdresse", query = "SELECT p FROM Personnes p WHERE p.adresse = :adresse"),
     @NamedQuery(name = "Personnes.findByDatenaiss", query = "SELECT p FROM Personnes p WHERE p.datenaiss = :datenaiss"),
     @NamedQuery(name = "Personnes.findByLieunaiss", query = "SELECT p FROM Personnes p WHERE p.lieunaiss = :lieunaiss"),
-    @NamedQuery(name = "Personnes.findByTel", query = "SELECT p FROM Personnes p WHERE p.tel = :tel"),
-    @NamedQuery(name = "Personnes.findByAdresse", query = "SELECT p FROM Personnes p WHERE p.adresse = :adresse"),
-    @NamedQuery(name = "Personnes.findByNin", query = "SELECT p FROM Personnes p WHERE p.nin = :nin")})
+    @NamedQuery(name = "Personnes.findByNin", query = "SELECT p FROM Personnes p WHERE p.nin = :nin"),
+    @NamedQuery(name = "Personnes.findByNom", query = "SELECT p FROM Personnes p WHERE p.nom = :nom"),
+    @NamedQuery(name = "Personnes.findByPrenom", query = "SELECT p FROM Personnes p WHERE p.prenom = :prenom"),
+    @NamedQuery(name = "Personnes.findByTel", query = "SELECT p FROM Personnes p WHERE p.tel = :tel")})
 public class Personnes implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -52,11 +52,8 @@ public class Personnes implements Serializable {
     @Column(name = "id")
     private Long id;
     @Basic(optional = false)
-    @Column(name = "nom")
-    private String nom;
-    @Basic(optional = false)
-    @Column(name = "prenom")
-    private String prenom;
+    @Column(name = "adresse")
+    private String adresse;
     @Basic(optional = false)
     @Column(name = "datenaiss")
     @Temporal(TemporalType.DATE)
@@ -64,14 +61,17 @@ public class Personnes implements Serializable {
     @Basic(optional = false)
     @Column(name = "lieunaiss")
     private String lieunaiss;
+    @Basic(optional = false)
+    @Column(name = "nin")
+    private int nin;
+    @Basic(optional = false)
+    @Column(name = "nom")
+    private String nom;
+    @Basic(optional = false)
+    @Column(name = "prenom")
+    private String prenom;
     @Column(name = "tel")
     private Integer tel;
-    @Basic(optional = false)
-    @Column(name = "adresse")
-    private String adresse;
-    @Basic(optional = false)
-    @Column(name = "NIN")
-    private int nin;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPersonne")
     @JsonIgnore
     private List<Internautes> internautesList;
@@ -83,14 +83,14 @@ public class Personnes implements Serializable {
         this.id = id;
     }
 
-    public Personnes(Long id, String nom, String prenom, Date datenaiss, String lieunaiss, String adresse, int nin) {
+    public Personnes(Long id, String adresse, Date datenaiss, String lieunaiss, int nin, String nom, String prenom) {
         this.id = id;
-        this.nom = nom;
-        this.prenom = prenom;
+        this.adresse = adresse;
         this.datenaiss = datenaiss;
         this.lieunaiss = lieunaiss;
-        this.adresse = adresse;
         this.nin = nin;
+        this.nom = nom;
+        this.prenom = prenom;
     }
 
     public Long getId() {
@@ -101,20 +101,12 @@ public class Personnes implements Serializable {
         this.id = id;
     }
 
-    public String getNom() {
-        return nom;
+    public String getAdresse() {
+        return adresse;
     }
 
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
-    public String getPrenom() {
-        return prenom;
-    }
-
-    public void setPrenom(String prenom) {
-        this.prenom = prenom;
+    public void setAdresse(String adresse) {
+        this.adresse = adresse;
     }
 
     public Date getDatenaiss() {
@@ -133,28 +125,36 @@ public class Personnes implements Serializable {
         this.lieunaiss = lieunaiss;
     }
 
-    public Integer getTel() {
-        return tel;
-    }
-
-    public void setTel(Integer tel) {
-        this.tel = tel;
-    }
-
-    public String getAdresse() {
-        return adresse;
-    }
-
-    public void setAdresse(String adresse) {
-        this.adresse = adresse;
-    }
-
     public int getNin() {
         return nin;
     }
 
     public void setNin(int nin) {
         this.nin = nin;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public String getPrenom() {
+        return prenom;
+    }
+
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
+    }
+
+    public Integer getTel() {
+        return tel;
+    }
+
+    public void setTel(Integer tel) {
+        this.tel = tel;
     }
 
     @XmlTransient

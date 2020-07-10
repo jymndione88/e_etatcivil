@@ -5,14 +5,14 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.administration.etatcivil.entities.Declarations;
 
 public interface DeclarationRepository extends JpaRepository<Declarations, Long> {
 
-	@Query("SELECT d FROM Declarations d WHERE d.numero = ?1")
-	Optional<Declarations> findByNum(String num);
-	
+	@Query("SELECT d FROM Declarations d WHERE d.numero = :numero")
+	Optional<Declarations> findByNum(String numero);
 	
 	//Optional<Declarations> findByNumero(String numero);
 	

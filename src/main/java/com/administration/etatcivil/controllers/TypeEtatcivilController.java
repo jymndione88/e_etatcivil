@@ -51,13 +51,15 @@ public class TypeEtatcivilController {
     @ResponseBody
 	public  ResponseEntity<?> addTypeEtatcivil(@RequestBody TypeEtatcivil typeetatcivil){
 
-    	//Si l'typeetatcivil n'existe pas déja
-    	if(metier.findByCode(typeetatcivil.getCode())!= null){
+	Optional<TypeEtatcivil> optionalart = metier.findByCode(typeetatcivil.getCode());
+    	
+    	//Si l'con n'existe pas déja
+    	if(optionalart== null){
+    		return new ResponseEntity<>("type etat civil existe déjà", HttpStatus.CONFLICT);
+    	}else {
+    		
     		 metier.save(typeetatcivil);
     		 return new ResponseEntity<>(typeetatcivil, HttpStatus.CREATED);
-    	}else {
-    		return new ResponseEntity<>("type etat civil existe déjà", HttpStatus.CONFLICT);
-
     	}
     	
 	}

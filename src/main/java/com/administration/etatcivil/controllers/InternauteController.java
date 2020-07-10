@@ -41,7 +41,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.administration.etatcivil.entities.Arrondissements;
 import com.administration.etatcivil.entities.Internautes;
 import com.administration.etatcivil.entities.Personnes;
 import com.administration.etatcivil.entities.Roles;
@@ -93,6 +92,23 @@ public class InternauteController {
 	        }else{
 	        	
 	        	return new ResponseEntity<List<Internautes>>(internaute, HttpStatus.OK);
+	        }
+
+	    	
+		}
+	   
+	   @RequestMapping(value= "/internaute/{nb}/{type}", method= RequestMethod.GET,
+	    	headers={"Accept=application/json"})
+	    @ResponseBody
+		public ResponseEntity<Integer> getListcompte(@PathVariable("nb") Long nb, @PathVariable("type") String type){
+	    Integer internaute= utilisateurRepository.findListCompte();	
+	    	
+	    	if (internaute == null ){
+	    		//erreur 204
+	            return new ResponseEntity<Integer>(HttpStatus.NOT_FOUND);
+	        }else{
+	        	
+	        	return new ResponseEntity<Integer>(internaute, HttpStatus.OK);
 	        }
 
 	    	

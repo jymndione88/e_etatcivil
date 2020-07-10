@@ -54,12 +54,9 @@ public class Communes implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idCommune")
     @JsonIgnore
     private List<EtatCivils> etatCivilsList;
-    @JoinColumn(name = "id_arrondissement", referencedColumnName = "id")
+    @JoinColumn(name = "id_departement", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Arrondissements idArrondissement;
-    @JoinColumn(name = "id_type_commune", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private TypeCommunes idTypeCommune;
+    private Departements idDepartement;
 
     public Communes() {
     }
@@ -107,20 +104,12 @@ public class Communes implements Serializable {
         this.etatCivilsList = etatCivilsList;
     }
 
-    public Arrondissements getIdArrondissement() {
-        return idArrondissement;
+    public Departements getIdDepartement() {
+        return idDepartement;
     }
 
-    public void setIdArrondissement(Arrondissements idArrondissement) {
-        this.idArrondissement = idArrondissement;
-    }
-
-    public TypeCommunes getIdTypeCommune() {
-        return idTypeCommune;
-    }
-
-    public void setIdTypeCommune(TypeCommunes idTypeCommune) {
-        this.idTypeCommune = idTypeCommune;
+    public void setIdDepartement(Departements idDepartement) {
+        this.idDepartement = idDepartement;
     }
 
     @Override

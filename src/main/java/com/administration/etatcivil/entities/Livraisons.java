@@ -6,7 +6,6 @@
 package com.administration.etatcivil.entities;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -14,7 +13,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -32,14 +33,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "Livraisons.findAll", query = "SELECT l FROM Livraisons l"),
     @NamedQuery(name = "Livraisons.findById", query = "SELECT l FROM Livraisons l WHERE l.id = :id"),
-    @NamedQuery(name = "Livraisons.findByDate", query = "SELECT l FROM Livraisons l WHERE l.date = :date"),
     @NamedQuery(name = "Livraisons.findByAdresse", query = "SELECT l FROM Livraisons l WHERE l.adresse = :adresse"),
     @NamedQuery(name = "Livraisons.findByBoiteEmail", query = "SELECT l FROM Livraisons l WHERE l.boiteEmail = :boiteEmail"),
     @NamedQuery(name = "Livraisons.findByBoitePostal", query = "SELECT l FROM Livraisons l WHERE l.boitePostal = :boitePostal"),
-    @NamedQuery(name = "Livraisons.findByPays", query = "SELECT l FROM Livraisons l WHERE l.pays = :pays"),
-    @NamedQuery(name = "Livraisons.findByIdDemande", query = "SELECT l FROM Livraisons l WHERE l.idDemande = :idDemande"),
-    @NamedQuery(name = "Livraisons.findByIdDeclaraion", query = "SELECT l FROM Livraisons l WHERE l.idDeclaraion = :idDeclaraion"),
-    @NamedQuery(name = "Livraisons.findByIdModeLivraison", query = "SELECT l FROM Livraisons l WHERE l.idModeLivraison = :idModeLivraison")})
+    @NamedQuery(name = "Livraisons.findByDate", query = "SELECT l FROM Livraisons l WHERE l.date = :date"),
+    @NamedQuery(name = "Livraisons.findByPays", query = "SELECT l FROM Livraisons l WHERE l.pays = :pays")})
 public class Livraisons implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -48,27 +46,29 @@ public class Livraisons implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
-    @Column(name = "date")
-    @Temporal(TemporalType.DATE)
-    private Date date;
     @Column(name = "adresse")
     private String adresse;
     @Column(name = "boite_email")
     private String boiteEmail;
     @Column(name = "boite_postal")
     private String boitePostal;
-    @Column(name = "pays")
-    private String pays;
+    @Column(name = "date")
+    @Temporal(TemporalType.DATE)
+    private Date date;
     @Lob
     @Column(name = "description")
     private String description;
-    @Column(name = "id_demande")
-    private BigInteger idDemande;
-    @Column(name = "id_declaraion")
-    private BigInteger idDeclaraion;
-    @Basic(optional = false)
-    @Column(name = "id_mode_livraison")
-    private long idModeLivraison;
+    @Column(name = "pays")
+    private String pays;
+    @JoinColumn(name = "id_mode_livraison", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private ModeLivraison idModeLivraison;
+    @JoinColumn(name = "id_declaraion", referencedColumnName = "id")
+    @ManyToOne
+    private Declarations idDeclaraion;
+    @JoinColumn(name = "id_demande", referencedColumnName = "id")
+    @ManyToOne
+    private Demandes idDemande;
 
     public Livraisons() {
     }
@@ -77,25 +77,12 @@ public class Livraisons implements Serializable {
         this.id = id;
     }
 
-    public Livraisons(Long id, long idModeLivraison) {
-        this.id = id;
-        this.idModeLivraison = idModeLivraison;
-    }
-
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
     }
 
     public String getAdresse() {
@@ -122,12 +109,12 @@ public class Livraisons implements Serializable {
         this.boitePostal = boitePostal;
     }
 
-    public String getPays() {
-        return pays;
+    public Date getDate() {
+        return date;
     }
 
-    public void setPays(String pays) {
-        this.pays = pays;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public String getDescription() {
@@ -138,28 +125,36 @@ public class Livraisons implements Serializable {
         this.description = description;
     }
 
-    public BigInteger getIdDemande() {
-        return idDemande;
+    public String getPays() {
+        return pays;
     }
 
-    public void setIdDemande(BigInteger idDemande) {
-        this.idDemande = idDemande;
+    public void setPays(String pays) {
+        this.pays = pays;
     }
 
-    public BigInteger getIdDeclaraion() {
-        return idDeclaraion;
-    }
-
-    public void setIdDeclaraion(BigInteger idDeclaraion) {
-        this.idDeclaraion = idDeclaraion;
-    }
-
-    public long getIdModeLivraison() {
+    public ModeLivraison getIdModeLivraison() {
         return idModeLivraison;
     }
 
-    public void setIdModeLivraison(long idModeLivraison) {
+    public void setIdModeLivraison(ModeLivraison idModeLivraison) {
         this.idModeLivraison = idModeLivraison;
+    }
+
+    public Declarations getIdDeclaraion() {
+        return idDeclaraion;
+    }
+
+    public void setIdDeclaraion(Declarations idDeclaraion) {
+        this.idDeclaraion = idDeclaraion;
+    }
+
+    public Demandes getIdDemande() {
+        return idDemande;
+    }
+
+    public void setIdDemande(Demandes idDemande) {
+        this.idDemande = idDemande;
     }
 
     @Override

@@ -36,7 +36,7 @@ public class DemandeController {
     @RequestMapping(value= "/demande/{nat}/{liste}", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
-	public ResponseEntity<List<Demandes>> getListDemande(@PathVariable("nat") String nat, @PathVariable("liste") String liste){
+	public ResponseEntity<List<Demandes>> getListDemandeBy(@PathVariable("nat") String nat, @PathVariable("liste") String liste){
     	
     	List<Demandes> con= null;
     			
@@ -48,6 +48,23 @@ public class DemandeController {
 			con= metier.findByDeces();	
 		}
     	
+    	if (con == null || con.isEmpty()){
+    		//erreur 204
+            return new ResponseEntity<List<Demandes>>(HttpStatus.NOT_FOUND);
+        }else{
+
+        	return new ResponseEntity<List<Demandes>>(con, HttpStatus.OK);
+        }
+
+	}
+    
+    @RequestMapping(value= "/demande", method= RequestMethod.GET,
+    		headers={"Accept=application/json"})
+    @ResponseBody
+	public ResponseEntity<List<Demandes>> getListDemande(){
+    	
+    	List<Demandes> con= metier.findAll();	
+
     	if (con == null || con.isEmpty()){
     		//erreur 204
             return new ResponseEntity<List<Demandes>>(HttpStatus.NOT_FOUND);
@@ -94,6 +111,13 @@ Optional<Demandes> optionalart = metier.findById(id);
         	art.setEtat(con.getEtat());
         	art.setCommentaire(con.getCommentaire());
         	
+        	art.setIdNaissance(con.getIdNaissance());
+        	art.setIdDeces(con.getIdDeces());
+        	art.setIdMariage(con.getIdMariage());
+        	art.setIdOfficier(con.getIdOfficier());
+        	
+        	metier.save(art);
+        	
         	return new ResponseEntity<>(art, HttpStatus.OK);
 		}
         
@@ -105,6 +129,30 @@ Optional<Demandes> optionalart = metier.findById(id);
     public ResponseEntity<?> getDemandeById(@PathVariable("id") Long id) {
 
     	Optional<Demandes> optionalart = metier.findById(id);
+
+    	if (optionalart== null){
+    		return new ResponseEntity<>("demande non trouvé", HttpStatus.NOT_FOUND);
+    		
+    	}else { 
+    		return new ResponseEntity<>(optionalart, HttpStatus.OK);
+		}
+
+    }
+    
+    @RequestMapping(value= "/demande/{id}/{nb}/{type}", method= RequestMethod.GET,
+    		headers={"Accept=application/json"})
+    @ResponseBody
+    public ResponseEntity<?> getNbDemandeBy(@PathVariable("id") Long id, @PathVariable("nb") Long nb, @PathVariable("type") String type) {
+
+    	Integer optionalart = null;
+    	if(type.equals("naissance")) {
+    		 optionalart = metier.nbfindByNaissance();
+    		 
+    	}else if (type.equals("mariage")) {
+    		optionalart = metier.nbfindByMariage();
+		}else{
+			optionalart = metier.nbfindByDeces();
+		}    	
 
     	if (optionalart== null){
     		return new ResponseEntity<>("demande non trouvé", HttpStatus.NOT_FOUND);

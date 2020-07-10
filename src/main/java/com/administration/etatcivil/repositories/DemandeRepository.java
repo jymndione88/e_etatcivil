@@ -22,4 +22,13 @@ public interface DemandeRepository extends JpaRepository<Demandes, Long> {
 	@Query("SELECT b FROM Demandes b WHERE b.idDeces != NULL")
 	List<Demandes> findByDeces();
 	
+	@Query("SELECT COUNT(b) FROM Demandes b WHERE b.idNaissance != NULL")
+	Integer nbfindByNaissance();
+	
+	@Query("SELECT COUNT(b) FROM Demandes b WHERE b.idMariage != NULL")
+	Integer nbfindByMariage();
+	
+	@Query("SELECT COUNT(b) FROM Demandes b WHERE b.idDeces != NULL")
+	Integer nbfindByDeces();
+	
 }

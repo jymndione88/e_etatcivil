@@ -27,6 +27,7 @@ import com.administration.etatcivil.repositories.TypeDeclarationRepository;
 @RequestMapping(value= "/api")
 @RestController
 public class TypeDeclarationController {
+	
 
 	@Autowired
 	private TypeDeclarationRepository metier;
@@ -51,12 +52,15 @@ public class TypeDeclarationController {
     @RequestMapping(value= "/typedeclaration", method= RequestMethod.POST)
 	public ResponseEntity<?> addTypeDeclaration(@RequestBody TypeDeclarations con){
     	
+	Optional<TypeDeclarations> optionalart = metier.findByCode(con.getCode());
+    	
     	//Si l'con n'existe pas déja
-    	if(metier.findByCode(con.getCode())!= null){
-    		 metier.save(con);
-    		return new ResponseEntity<>(con, HttpStatus.CREATED);
-    	}else {
+    	if(optionalart== null){
     		return new ResponseEntity<>("TypeDeclarations existe déjà", HttpStatus.CONFLICT);
+    	}else {
+    		
+    		 metier.save(con);
+     		return new ResponseEntity<>(con, HttpStatus.CREATED);
     	}
     	
 	}

@@ -15,7 +15,6 @@ public interface ModeLivraisonRepository extends JpaRepository<ModeLivraison, Lo
 	Optional<ModeLivraison> findByMode(String mode);
 	
 	//Optional<ModeLivraison> findByNumero(String numero);
-	
 	 // @Query("SELECT u FROM User u WHERE u.status = ?1 and u.name = ?2") 
 	 //@Query("SELECT b FROM Bien b WHERE b.bien.id = ?1")
 	 //List<Arrondissements> findByTypeBien(Integer type_bien_id);

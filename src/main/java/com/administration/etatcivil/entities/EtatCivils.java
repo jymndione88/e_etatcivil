@@ -53,13 +53,16 @@ public class EtatCivils implements Serializable {
     private String libelle;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEtatCivil")
     @JsonIgnore
-    private List<LieuHospitalier> lieuHospitalierList;
+    private List<Mariages> mariagesList;
     @JoinColumn(name = "id_commune", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Communes idCommune;
     @JoinColumn(name = "id_type_etat_civil", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private TypeEtatcivil idTypeEtatCivil;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEtatCivil")
+    @JsonIgnore
+    private List<Officiers> officiersList;
 
     public EtatCivils() {
     }
@@ -99,12 +102,12 @@ public class EtatCivils implements Serializable {
     }
 
     @XmlTransient
-    public List<LieuHospitalier> getLieuHospitalierList() {
-        return lieuHospitalierList;
+    public List<Mariages> getMariagesList() {
+        return mariagesList;
     }
 
-    public void setLieuHospitalierList(List<LieuHospitalier> lieuHospitalierList) {
-        this.lieuHospitalierList = lieuHospitalierList;
+    public void setMariagesList(List<Mariages> mariagesList) {
+        this.mariagesList = mariagesList;
     }
 
     public Communes getIdCommune() {
@@ -121,6 +124,15 @@ public class EtatCivils implements Serializable {
 
     public void setIdTypeEtatCivil(TypeEtatcivil idTypeEtatCivil) {
         this.idTypeEtatCivil = idTypeEtatCivil;
+    }
+
+    @XmlTransient
+    public List<Officiers> getOfficiersList() {
+        return officiersList;
+    }
+
+    public void setOfficiersList(List<Officiers> officiersList) {
+        this.officiersList = officiersList;
     }
 
     @Override

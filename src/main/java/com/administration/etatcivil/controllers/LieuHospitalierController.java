@@ -32,12 +32,13 @@ public class LieuHospitalierController {
 
 	@Autowired
 	private LieuHospitalierRepository metier;
-	                      
+	
     @RequestMapping(value= "/lieuhospitalier", method= RequestMethod.GET,
     		headers={"Accept=application/json"})
     @ResponseBody
 	public ResponseEntity<List<LieuHospitalier>> getListLieuHospitalier(){
     	List<LieuHospitalier> con= metier.findAll();	
+    	
 
     	if (con == null || con.isEmpty()){
     		//erreur 204
@@ -78,7 +79,6 @@ Optional<LieuHospitalier> optionalart = metier.findById(id);
         	LieuHospitalier art = optionalart.get();
         	art.setCode(con.getCode());
         	art.setLibelle(con.getLibelle());
-        	art.setIdEtatCivil(con.getIdEtatCivil());
         	
         	 metier.save(art);
         	 return new ResponseEntity<>(art, HttpStatus.OK);
@@ -92,6 +92,22 @@ Optional<LieuHospitalier> optionalart = metier.findById(id);
     public ResponseEntity<?> getLieuHospitalierById(@PathVariable("id") Long id) {
 
     	Optional<LieuHospitalier> optionalart = metier.findById(id);
+
+    	if (optionalart== null){
+    		return new ResponseEntity<>("LieuHospitalier non trouvé", HttpStatus.NOT_FOUND);
+    	}else { 
+		
+			return new ResponseEntity<>(optionalart, HttpStatus.OK);
+    	}
+
+    }
+    
+    @RequestMapping(value= "/lieuhospitalier/{id}/{libelle}", method= RequestMethod.GET,
+    		headers={"Accept=application/json"})
+    @ResponseBody
+    public ResponseEntity<?> getLieuHospitalierByLibelle(@PathVariable("id") Long id, @PathVariable("libelle") String libelle) {
+
+    	Optional<LieuHospitalier> optionalart = metier.findByLibelle(libelle);
 
     	if (optionalart== null){
     		return new ResponseEntity<>("LieuHospitalier non trouvé", HttpStatus.NOT_FOUND);

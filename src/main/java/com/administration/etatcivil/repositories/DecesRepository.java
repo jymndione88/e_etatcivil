@@ -12,7 +12,7 @@ import com.administration.etatcivil.entities.Mariages;
 
 public interface DecesRepository extends JpaRepository<Deces, Long> {
 
-	@Query("SELECT b FROM Deces b WHERE b.idDeclaration= :num")
+	@Query("SELECT b FROM Deces b WHERE b.idDeclaration.id= :num")
 	Optional<Deces> findByDeclaration(Long num);
 	
 	

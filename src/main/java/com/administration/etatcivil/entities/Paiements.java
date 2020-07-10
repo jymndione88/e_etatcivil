@@ -13,6 +13,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -31,9 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Paiements.findAll", query = "SELECT p FROM Paiements p"),
     @NamedQuery(name = "Paiements.findById", query = "SELECT p FROM Paiements p WHERE p.id = :id"),
     @NamedQuery(name = "Paiements.findByDate", query = "SELECT p FROM Paiements p WHERE p.date = :date"),
-    @NamedQuery(name = "Paiements.findByMontant", query = "SELECT p FROM Paiements p WHERE p.montant = :montant"),
-    @NamedQuery(name = "Paiements.findByIdFacture", query = "SELECT p FROM Paiements p WHERE p.idFacture = :idFacture"),
-    @NamedQuery(name = "Paiements.findByIdModePaiement", query = "SELECT p FROM Paiements p WHERE p.idModePaiement = :idModePaiement")})
+    @NamedQuery(name = "Paiements.findByMontant", query = "SELECT p FROM Paiements p WHERE p.montant = :montant")})
 public class Paiements implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -49,12 +49,12 @@ public class Paiements implements Serializable {
     @Basic(optional = false)
     @Column(name = "montant")
     private double montant;
-    @Basic(optional = false)
-    @Column(name = "id_facture")
-    private long idFacture;
-    @Basic(optional = false)
-    @Column(name = "id_mode_paiement")
-    private long idModePaiement;
+    @JoinColumn(name = "id_facture", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Factures idFacture;
+    @JoinColumn(name = "id_mode_paiement", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private ModePaiements idModePaiement;
 
     public Paiements() {
     }
@@ -63,12 +63,10 @@ public class Paiements implements Serializable {
         this.id = id;
     }
 
-    public Paiements(Long id, Date date, double montant, long idFacture, long idModePaiement) {
+    public Paiements(Long id, Date date, double montant) {
         this.id = id;
         this.date = date;
         this.montant = montant;
-        this.idFacture = idFacture;
-        this.idModePaiement = idModePaiement;
     }
 
     public Long getId() {
@@ -95,19 +93,19 @@ public class Paiements implements Serializable {
         this.montant = montant;
     }
 
-    public long getIdFacture() {
+    public Factures getIdFacture() {
         return idFacture;
     }
 
-    public void setIdFacture(long idFacture) {
+    public void setIdFacture(Factures idFacture) {
         this.idFacture = idFacture;
     }
 
-    public long getIdModePaiement() {
+    public ModePaiements getIdModePaiement() {
         return idModePaiement;
     }
 
-    public void setIdModePaiement(long idModePaiement) {
+    public void setIdModePaiement(ModePaiements idModePaiement) {
         this.idModePaiement = idModePaiement;
     }
 

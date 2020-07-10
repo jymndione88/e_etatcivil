@@ -1,5 +1,8 @@
 package com.administration.etatcivil.controllers;
 
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 
@@ -79,8 +82,23 @@ Optional<Naissances> optionalart = metier.findById(id);
         	art.setNom(con.getNom());  	
         	art.setPrenom(con.getPrenom());
         	art.setDatenaiss(con.getDatenaiss());
-        	art.setLieunaiss(con.getLieunaiss());
+        	
+        	//Time t= null;
+        	//try {
+        		//System.out.println(con.getHeurenaiss());
+        		
+        		//DateFormat d= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            //String st= d.format(con.getHeurenaiss());
+            	 //t= new Time(d.parse(st).getTime());
+            	
+            	// System.out.println(t);
+    		//} catch (Exception e) {
+    			//System.out.println("erreur convertion: " + e.getMessage());
+    		//}
+        	
+        	//art.setHeurenaiss(t);
         	art.setHeurenaiss(con.getHeurenaiss());
+        	
         	art.setNomPere(con.getNomPere());
         	art.setPrenomPere(con.getPrenomPere());
         	art.setNomMere(con.getNomMere());
@@ -89,6 +107,7 @@ Optional<Naissances> optionalart = metier.findById(id);
         	
         	art.setIdJugement(con.getIdJugement());
         	art.setIdDeclaration(con.getIdDeclaration());
+        	art.setIdLieuHospitalier(con.getIdLieuHospitalier());
         	
         	metier.save(art);
         	

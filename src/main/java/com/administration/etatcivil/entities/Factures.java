@@ -7,7 +7,9 @@ package com.administration.etatcivil.entities;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,10 +19,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
@@ -33,11 +39,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Factures.findAll", query = "SELECT f FROM Factures f"),
     @NamedQuery(name = "Factures.findById", query = "SELECT f FROM Factures f WHERE f.id = :id"),
     @NamedQuery(name = "Factures.findByDate", query = "SELECT f FROM Factures f WHERE f.date = :date"),
+    @NamedQuery(name = "Factures.findByEtat", query = "SELECT f FROM Factures f WHERE f.etat = :etat"),
     @NamedQuery(name = "Factures.findByMontant", query = "SELECT f FROM Factures f WHERE f.montant = :montant"),
     @NamedQuery(name = "Factures.findByRemise", query = "SELECT f FROM Factures f WHERE f.remise = :remise"),
-    @NamedQuery(name = "Factures.findByTva", query = "SELECT f FROM Factures f WHERE f.tva = :tva"),
-    @NamedQuery(name = "Factures.findByEtat", query = "SELECT f FROM Factures f WHERE f.etat = :etat"),
-    @NamedQuery(name = "Factures.findByIdEtatFacture", query = "SELECT f FROM Factures f WHERE f.idEtatFacture = :idEtatFacture")})
+    @NamedQuery(name = "Factures.findByTva", query = "SELECT f FROM Factures f WHERE f.tva = :tva")})
 public class Factures implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -51,6 +56,9 @@ public class Factures implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date date;
     @Basic(optional = false)
+    @Column(name = "etat")
+    private boolean etat;
+    @Basic(optional = false)
     @Column(name = "montant")
     private double montant;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -58,18 +66,15 @@ public class Factures implements Serializable {
     private Float remise;
     @Column(name = "tva")
     private Float tva;
-    @Basic(optional = false)
-    @Column(name = "etat")
-    private boolean etat;
-    @Basic(optional = false)
-    @Column(name = "id_etat_facture")
-    private long idEtatFacture;
     @JoinColumn(name = "id_demande", referencedColumnName = "id")
     @ManyToOne
     private Demandes idDemande;
     @JoinColumn(name = "id_declaration", referencedColumnName = "id")
     @ManyToOne
     private Declarations idDeclaration;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idFacture")
+    @JsonIgnore
+    private List<Paiements> paiementsList;
 
     public Factures() {
     }
@@ -78,12 +83,11 @@ public class Factures implements Serializable {
         this.id = id;
     }
 
-    public Factures(Long id, Date date, double montant, boolean etat, long idEtatFacture) {
+    public Factures(Long id, Date date, boolean etat, double montant) {
         this.id = id;
         this.date = date;
-        this.montant = montant;
         this.etat = etat;
-        this.idEtatFacture = idEtatFacture;
+        this.montant = montant;
     }
 
     public Long getId() {
@@ -100,6 +104,14 @@ public class Factures implements Serializable {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public boolean getEtat() {
+        return etat;
+    }
+
+    public void setEtat(boolean etat) {
+        this.etat = etat;
     }
 
     public double getMontant() {
@@ -126,22 +138,6 @@ public class Factures implements Serializable {
         this.tva = tva;
     }
 
-    public boolean getEtat() {
-        return etat;
-    }
-
-    public void setEtat(boolean etat) {
-        this.etat = etat;
-    }
-
-    public long getIdEtatFacture() {
-        return idEtatFacture;
-    }
-
-    public void setIdEtatFacture(long idEtatFacture) {
-        this.idEtatFacture = idEtatFacture;
-    }
-
     public Demandes getIdDemande() {
         return idDemande;
     }
@@ -156,6 +152,15 @@ public class Factures implements Serializable {
 
     public void setIdDeclaration(Declarations idDeclaration) {
         this.idDeclaration = idDeclaration;
+    }
+
+    @XmlTransient
+    public List<Paiements> getPaiementsList() {
+        return paiementsList;
+    }
+
+    public void setPaiementsList(List<Paiements> paiementsList) {
+        this.paiementsList = paiementsList;
     }
 
     @Override

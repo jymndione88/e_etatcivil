@@ -37,14 +37,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @NamedQueries({
     @NamedQuery(name = "Deces.findAll", query = "SELECT d FROM Deces d"),
     @NamedQuery(name = "Deces.findById", query = "SELECT d FROM Deces d WHERE d.id = :id"),
+    @NamedQuery(name = "Deces.findByDateDeces", query = "SELECT d FROM Deces d WHERE d.dateDeces = :dateDeces"),
+    @NamedQuery(name = "Deces.findByDatenaiss", query = "SELECT d FROM Deces d WHERE d.datenaiss = :datenaiss"),
+    @NamedQuery(name = "Deces.findByHeureDeces", query = "SELECT d FROM Deces d WHERE d.heureDeces = :heureDeces"),
+    @NamedQuery(name = "Deces.findByLieunaiss", query = "SELECT d FROM Deces d WHERE d.lieunaiss = :lieunaiss"),
+    @NamedQuery(name = "Deces.findByMotif", query = "SELECT d FROM Deces d WHERE d.motif = :motif"),
     @NamedQuery(name = "Deces.findByNomMedecin", query = "SELECT d FROM Deces d WHERE d.nomMedecin = :nomMedecin"),
     @NamedQuery(name = "Deces.findByNomMort", query = "SELECT d FROM Deces d WHERE d.nomMort = :nomMort"),
-    @NamedQuery(name = "Deces.findByPrenomMort", query = "SELECT d FROM Deces d WHERE d.prenomMort = :prenomMort"),
-    @NamedQuery(name = "Deces.findByDatenaiss", query = "SELECT d FROM Deces d WHERE d.datenaiss = :datenaiss"),
-    @NamedQuery(name = "Deces.findByLieunaiss", query = "SELECT d FROM Deces d WHERE d.lieunaiss = :lieunaiss"),
-    @NamedQuery(name = "Deces.findByDateDeces", query = "SELECT d FROM Deces d WHERE d.dateDeces = :dateDeces"),
-    @NamedQuery(name = "Deces.findByHeureDeces", query = "SELECT d FROM Deces d WHERE d.heureDeces = :heureDeces"),
-    @NamedQuery(name = "Deces.findByMotif", query = "SELECT d FROM Deces d WHERE d.motif = :motif")})
+    @NamedQuery(name = "Deces.findByPrenomMort", query = "SELECT d FROM Deces d WHERE d.prenomMort = :prenomMort")})
 public class Deces implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -54,6 +54,23 @@ public class Deces implements Serializable {
     @Column(name = "id")
     private Long id;
     @Basic(optional = false)
+    @Column(name = "date_deces")
+    @Temporal(TemporalType.DATE)
+    private Date dateDeces;
+    @Basic(optional = false)
+    @Column(name = "datenaiss")
+    @Temporal(TemporalType.DATE)
+    private Date datenaiss;
+    @Basic(optional = false)
+    @Column(name = "heure_deces")
+    @Temporal(TemporalType.TIME)
+    private Date heureDeces;
+    @Basic(optional = false)
+    @Column(name = "lieunaiss")
+    private String lieunaiss;
+    @Column(name = "motif")
+    private String motif;
+    @Basic(optional = false)
     @Column(name = "nom_medecin")
     private String nomMedecin;
     @Basic(optional = false)
@@ -62,23 +79,6 @@ public class Deces implements Serializable {
     @Basic(optional = false)
     @Column(name = "prenom_mort")
     private String prenomMort;
-    @Basic(optional = false)
-    @Column(name = "datenaiss")
-    @Temporal(TemporalType.DATE)
-    private Date datenaiss;
-    @Basic(optional = false)
-    @Column(name = "lieunaiss")
-    private String lieunaiss;
-    @Basic(optional = false)
-    @Column(name = "date_deces")
-    @Temporal(TemporalType.DATE)
-    private Date dateDeces;
-    @Basic(optional = false)
-    @Column(name = "heure_deces")
-    @Temporal(TemporalType.TIME)
-    private Date heureDeces;
-    @Column(name = "motif")
-    private String motif;
     @JoinColumn(name = "id_declaration", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Declarations idDeclaration;
@@ -96,15 +96,15 @@ public class Deces implements Serializable {
         this.id = id;
     }
 
-    public Deces(Long id, String nomMedecin, String nomMort, String prenomMort, Date datenaiss, String lieunaiss, Date dateDeces, Date heureDeces) {
+    public Deces(Long id, Date dateDeces, Date datenaiss, Date heureDeces, String lieunaiss, String nomMedecin, String nomMort, String prenomMort) {
         this.id = id;
+        this.dateDeces = dateDeces;
+        this.datenaiss = datenaiss;
+        this.heureDeces = heureDeces;
+        this.lieunaiss = lieunaiss;
         this.nomMedecin = nomMedecin;
         this.nomMort = nomMort;
         this.prenomMort = prenomMort;
-        this.datenaiss = datenaiss;
-        this.lieunaiss = lieunaiss;
-        this.dateDeces = dateDeces;
-        this.heureDeces = heureDeces;
     }
 
     public Long getId() {
@@ -113,6 +113,46 @@ public class Deces implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Date getDateDeces() {
+        return dateDeces;
+    }
+
+    public void setDateDeces(Date dateDeces) {
+        this.dateDeces = dateDeces;
+    }
+
+    public Date getDatenaiss() {
+        return datenaiss;
+    }
+
+    public void setDatenaiss(Date datenaiss) {
+        this.datenaiss = datenaiss;
+    }
+
+    public Date getHeureDeces() {
+        return heureDeces;
+    }
+
+    public void setHeureDeces(Date heureDeces) {
+        this.heureDeces = heureDeces;
+    }
+
+    public String getLieunaiss() {
+        return lieunaiss;
+    }
+
+    public void setLieunaiss(String lieunaiss) {
+        this.lieunaiss = lieunaiss;
+    }
+
+    public String getMotif() {
+        return motif;
+    }
+
+    public void setMotif(String motif) {
+        this.motif = motif;
     }
 
     public String getNomMedecin() {
@@ -137,46 +177,6 @@ public class Deces implements Serializable {
 
     public void setPrenomMort(String prenomMort) {
         this.prenomMort = prenomMort;
-    }
-
-    public Date getDatenaiss() {
-        return datenaiss;
-    }
-
-    public void setDatenaiss(Date datenaiss) {
-        this.datenaiss = datenaiss;
-    }
-
-    public String getLieunaiss() {
-        return lieunaiss;
-    }
-
-    public void setLieunaiss(String lieunaiss) {
-        this.lieunaiss = lieunaiss;
-    }
-
-    public Date getDateDeces() {
-        return dateDeces;
-    }
-
-    public void setDateDeces(Date dateDeces) {
-        this.dateDeces = dateDeces;
-    }
-
-    public Date getHeureDeces() {
-        return heureDeces;
-    }
-
-    public void setHeureDeces(Date heureDeces) {
-        this.heureDeces = heureDeces;
-    }
-
-    public String getMotif() {
-        return motif;
-    }
-
-    public void setMotif(String motif) {
-        this.motif = motif;
     }
 
     public Declarations getIdDeclaration() {

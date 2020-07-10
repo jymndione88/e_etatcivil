@@ -13,7 +13,8 @@ public interface LieuHospitalierRepository extends JpaRepository<LieuHospitalier
 	 @Query("SELECT b FROM LieuHospitalier b WHERE b.code = ?1")
 	 Optional<LieuHospitalier> findByCode(String code);
 	
-	//Optional<LieuHospitalier> findByNumero(String numero);
+	 @Query("SELECT b FROM LieuHospitalier b WHERE b.libelle = ?1")
+	 Optional<LieuHospitalier> findByLibelle(String libelle);
 	
 	 // @Query("SELECT u FROM User u WHERE u.status = ?1 and u.name = ?2") 
 	

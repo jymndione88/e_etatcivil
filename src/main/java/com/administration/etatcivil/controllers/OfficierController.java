@@ -80,7 +80,6 @@ Optional<Officiers> optionalart = metier.findById(id);
         	Officiers art = optionalart.get();
         	art.setIdInternaute(con.getIdInternaute());
         	art.setIdEtatCivil(con.getIdEtatCivil());
-        	art.setIdRoleOfficier(con.getIdRoleOfficier());
         	
         	 metier.save(art);
         	 return new ResponseEntity<>(art, HttpStatus.OK);

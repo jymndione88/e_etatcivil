@@ -11,8 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.administration.etatcivil.entities.Arrondissements;
-import com.administration.etatcivil.repositories.ArrondissementRepository;
+import com.administration.etatcivil.entities.Communes;
+import com.administration.etatcivil.repositories.CommuneRepository;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -24,19 +24,19 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
-public class ArrondissementTest {
+public class CommuneTest {
 
 	@Autowired
-	private ArrondissementRepository metier;
-	Arrondissements arrondissements;
+	private CommuneRepository metier;
+	Communes arrondissements;
 	
 	@Autowired
-	public ArrondissementTest(Arrondissements arrondissements){
+	public CommuneTest(Communes arrondissements){
 		this.arrondissements= arrondissements;
 	}
 	
 	@BeforeEach
-	void beforeEach(@Autowired Arrondissements arrondissements) {
+	void beforeEach(@Autowired Communes arrondissements) {
 		this.arrondissements= arrondissements;
 	}
 	
@@ -49,7 +49,7 @@ public class ArrondissementTest {
 	
 	@DisplayName("check si instanciation objet dans le constructeur avec parametre marche")
 	@Test
-	public void checkInstanciationConstructeurParametre(@Autowired Arrondissements arrondissements) {
+	public void checkInstanciationConstructeurParametre(@Autowired Communes arrondissements) {
 		assertNotNull(arrondissements);
 		assertTrue(arrondissements.getId()>0); 
 	}
@@ -57,7 +57,7 @@ public class ArrondissementTest {
 	@DisplayName("test fonction get all arrondissements")
 	@Test
 	public void testGetAllArrondissements() {
-		List<Arrondissements> arr=	metier.findAll();	
+		List<Communes> arr=	metier.findAll();	
 		assertEquals(arr, metier.findAll()); 
 	}
 	

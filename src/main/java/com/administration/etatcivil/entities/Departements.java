@@ -51,12 +51,12 @@ public class Departements implements Serializable {
     @Basic(optional = false)
     @Column(name = "libelle")
     private String libelle;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDepartement")
+    @JsonIgnore
+    private List<Communes> communesList;
     @JoinColumn(name = "id_region", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Regions idRegion;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idDepartement")
-    @JsonIgnore
-    private List<Arrondissements> arrondissementsList;
 
     public Departements() {
     }
@@ -95,21 +95,21 @@ public class Departements implements Serializable {
         this.libelle = libelle;
     }
 
+    @XmlTransient
+    public List<Communes> getCommunesList() {
+        return communesList;
+    }
+
+    public void setCommunesList(List<Communes> communesList) {
+        this.communesList = communesList;
+    }
+
     public Regions getIdRegion() {
         return idRegion;
     }
 
     public void setIdRegion(Regions idRegion) {
         this.idRegion = idRegion;
-    }
-
-    @XmlTransient
-    public List<Arrondissements> getArrondissementsList() {
-        return arrondissementsList;
-    }
-
-    public void setArrondissementsList(List<Arrondissements> arrondissementsList) {
-        this.arrondissementsList = arrondissementsList;
     }
 
     @Override

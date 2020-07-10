@@ -38,20 +38,20 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @NamedQueries({
     @NamedQuery(name = "Demandes.findAll", query = "SELECT d FROM Demandes d"),
     @NamedQuery(name = "Demandes.findById", query = "SELECT d FROM Demandes d WHERE d.id = :id"),
-    @NamedQuery(name = "Demandes.findByNumero", query = "SELECT d FROM Demandes d WHERE d.numero = :numero"),
+    @NamedQuery(name = "Demandes.findByCivilite", query = "SELECT d FROM Demandes d WHERE d.civilite = :civilite"),
     @NamedQuery(name = "Demandes.findByDate", query = "SELECT d FROM Demandes d WHERE d.date = :date"),
+    @NamedQuery(name = "Demandes.findByDatenaiss", query = "SELECT d FROM Demandes d WHERE d.datenaiss = :datenaiss"),
+    @NamedQuery(name = "Demandes.findByEtat", query = "SELECT d FROM Demandes d WHERE d.etat = :etat"),
     @NamedQuery(name = "Demandes.findByMotif", query = "SELECT d FROM Demandes d WHERE d.motif = :motif"),
-    @NamedQuery(name = "Demandes.findByQualiteDemandeur", query = "SELECT d FROM Demandes d WHERE d.qualiteDemandeur = :qualiteDemandeur"),
+    @NamedQuery(name = "Demandes.findByNationalite", query = "SELECT d FROM Demandes d WHERE d.nationalite = :nationalite"),
     @NamedQuery(name = "Demandes.findByNatureActe", query = "SELECT d FROM Demandes d WHERE d.natureActe = :natureActe"),
     @NamedQuery(name = "Demandes.findByNbreExemplaire", query = "SELECT d FROM Demandes d WHERE d.nbreExemplaire = :nbreExemplaire"),
-    @NamedQuery(name = "Demandes.findByCivilite", query = "SELECT d FROM Demandes d WHERE d.civilite = :civilite"),
     @NamedQuery(name = "Demandes.findByNom", query = "SELECT d FROM Demandes d WHERE d.nom = :nom"),
-    @NamedQuery(name = "Demandes.findByPrenom", query = "SELECT d FROM Demandes d WHERE d.prenom = :prenom"),
-    @NamedQuery(name = "Demandes.findByDatenaiss", query = "SELECT d FROM Demandes d WHERE d.datenaiss = :datenaiss"),
     @NamedQuery(name = "Demandes.findByNumRegistre", query = "SELECT d FROM Demandes d WHERE d.numRegistre = :numRegistre"),
+    @NamedQuery(name = "Demandes.findByNumero", query = "SELECT d FROM Demandes d WHERE d.numero = :numero"),
     @NamedQuery(name = "Demandes.findByPays", query = "SELECT d FROM Demandes d WHERE d.pays = :pays"),
-    @NamedQuery(name = "Demandes.findByNationalite", query = "SELECT d FROM Demandes d WHERE d.nationalite = :nationalite"),
-    @NamedQuery(name = "Demandes.findByEtat", query = "SELECT d FROM Demandes d WHERE d.etat = :etat")})
+    @NamedQuery(name = "Demandes.findByPrenom", query = "SELECT d FROM Demandes d WHERE d.prenom = :prenom"),
+    @NamedQuery(name = "Demandes.findByQualiteDemandeur", query = "SELECT d FROM Demandes d WHERE d.qualiteDemandeur = :qualiteDemandeur")})
 public class Demandes implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -61,18 +61,28 @@ public class Demandes implements Serializable {
     @Column(name = "id")
     private Long id;
     @Basic(optional = false)
-    @Column(name = "numero")
-    private String numero;
+    @Column(name = "civilite")
+    private String civilite;
+    @Lob
+    @Column(name = "commentaire")
+    private String commentaire;
     @Basic(optional = false)
     @Column(name = "date")
     @Temporal(TemporalType.DATE)
     private Date date;
     @Basic(optional = false)
+    @Column(name = "datenaiss")
+    @Temporal(TemporalType.DATE)
+    private Date datenaiss;
+    @Basic(optional = false)
+    @Column(name = "etat")
+    private boolean etat;
+    @Basic(optional = false)
     @Column(name = "motif")
     private String motif;
     @Basic(optional = false)
-    @Column(name = "qualite_demandeur")
-    private String qualiteDemandeur;
+    @Column(name = "nationalite")
+    private String nationalite;
     @Basic(optional = false)
     @Column(name = "nature_acte")
     private String natureActe;
@@ -80,33 +90,26 @@ public class Demandes implements Serializable {
     @Column(name = "nbre_exemplaire")
     private int nbreExemplaire;
     @Basic(optional = false)
-    @Column(name = "civilite")
-    private String civilite;
-    @Basic(optional = false)
     @Column(name = "nom")
     private String nom;
-    @Basic(optional = false)
-    @Column(name = "prenom")
-    private String prenom;
-    @Basic(optional = false)
-    @Column(name = "datenaiss")
-    @Temporal(TemporalType.DATE)
-    private Date datenaiss;
     @Basic(optional = false)
     @Column(name = "num_registre")
     private String numRegistre;
     @Basic(optional = false)
+    @Column(name = "numero")
+    private String numero;
+    @Basic(optional = false)
     @Column(name = "pays")
     private String pays;
     @Basic(optional = false)
-    @Column(name = "nationalite")
-    private String nationalite;
+    @Column(name = "prenom")
+    private String prenom;
     @Basic(optional = false)
-    @Column(name = "etat")
-    private boolean etat;
-    @Lob
-    @Column(name = "commentaire")
-    private String commentaire;
+    @Column(name = "qualite_demandeur")
+    private String qualiteDemandeur;
+    @OneToMany(mappedBy = "idDemande")
+    @JsonIgnore
+    private List<Livraisons> livraisonsList;
     @OneToMany(mappedBy = "idDemande")
     @JsonIgnore
     private List<Factures> facturesList;
@@ -130,22 +133,22 @@ public class Demandes implements Serializable {
         this.id = id;
     }
 
-    public Demandes(Long id, String numero, Date date, String motif, String qualiteDemandeur, String natureActe, int nbreExemplaire, String civilite, String nom, String prenom, Date datenaiss, String numRegistre, String pays, String nationalite, boolean etat) {
+    public Demandes(Long id, String civilite, Date date, Date datenaiss, boolean etat, String motif, String nationalite, String natureActe, int nbreExemplaire, String nom, String numRegistre, String numero, String pays, String prenom, String qualiteDemandeur) {
         this.id = id;
-        this.numero = numero;
+        this.civilite = civilite;
         this.date = date;
+        this.datenaiss = datenaiss;
+        this.etat = etat;
         this.motif = motif;
-        this.qualiteDemandeur = qualiteDemandeur;
+        this.nationalite = nationalite;
         this.natureActe = natureActe;
         this.nbreExemplaire = nbreExemplaire;
-        this.civilite = civilite;
         this.nom = nom;
-        this.prenom = prenom;
-        this.datenaiss = datenaiss;
         this.numRegistre = numRegistre;
+        this.numero = numero;
         this.pays = pays;
-        this.nationalite = nationalite;
-        this.etat = etat;
+        this.prenom = prenom;
+        this.qualiteDemandeur = qualiteDemandeur;
     }
 
     public Long getId() {
@@ -156,12 +159,20 @@ public class Demandes implements Serializable {
         this.id = id;
     }
 
-    public String getNumero() {
-        return numero;
+    public String getCivilite() {
+        return civilite;
     }
 
-    public void setNumero(String numero) {
-        this.numero = numero;
+    public void setCivilite(String civilite) {
+        this.civilite = civilite;
+    }
+
+    public String getCommentaire() {
+        return commentaire;
+    }
+
+    public void setCommentaire(String commentaire) {
+        this.commentaire = commentaire;
     }
 
     public Date getDate() {
@@ -172,6 +183,22 @@ public class Demandes implements Serializable {
         this.date = date;
     }
 
+    public Date getDatenaiss() {
+        return datenaiss;
+    }
+
+    public void setDatenaiss(Date datenaiss) {
+        this.datenaiss = datenaiss;
+    }
+
+    public boolean getEtat() {
+        return etat;
+    }
+
+    public void setEtat(boolean etat) {
+        this.etat = etat;
+    }
+
     public String getMotif() {
         return motif;
     }
@@ -180,12 +207,12 @@ public class Demandes implements Serializable {
         this.motif = motif;
     }
 
-    public String getQualiteDemandeur() {
-        return qualiteDemandeur;
+    public String getNationalite() {
+        return nationalite;
     }
 
-    public void setQualiteDemandeur(String qualiteDemandeur) {
-        this.qualiteDemandeur = qualiteDemandeur;
+    public void setNationalite(String nationalite) {
+        this.nationalite = nationalite;
     }
 
     public String getNatureActe() {
@@ -204,36 +231,12 @@ public class Demandes implements Serializable {
         this.nbreExemplaire = nbreExemplaire;
     }
 
-    public String getCivilite() {
-        return civilite;
-    }
-
-    public void setCivilite(String civilite) {
-        this.civilite = civilite;
-    }
-
     public String getNom() {
         return nom;
     }
 
     public void setNom(String nom) {
         this.nom = nom;
-    }
-
-    public String getPrenom() {
-        return prenom;
-    }
-
-    public void setPrenom(String prenom) {
-        this.prenom = prenom;
-    }
-
-    public Date getDatenaiss() {
-        return datenaiss;
-    }
-
-    public void setDatenaiss(Date datenaiss) {
-        this.datenaiss = datenaiss;
     }
 
     public String getNumRegistre() {
@@ -244,6 +247,14 @@ public class Demandes implements Serializable {
         this.numRegistre = numRegistre;
     }
 
+    public String getNumero() {
+        return numero;
+    }
+
+    public void setNumero(String numero) {
+        this.numero = numero;
+    }
+
     public String getPays() {
         return pays;
     }
@@ -252,28 +263,29 @@ public class Demandes implements Serializable {
         this.pays = pays;
     }
 
-    public String getNationalite() {
-        return nationalite;
+    public String getPrenom() {
+        return prenom;
     }
 
-    public void setNationalite(String nationalite) {
-        this.nationalite = nationalite;
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
     }
 
-    public boolean getEtat() {
-        return etat;
+    public String getQualiteDemandeur() {
+        return qualiteDemandeur;
     }
 
-    public void setEtat(boolean etat) {
-        this.etat = etat;
+    public void setQualiteDemandeur(String qualiteDemandeur) {
+        this.qualiteDemandeur = qualiteDemandeur;
     }
 
-    public String getCommentaire() {
-        return commentaire;
+    @XmlTransient
+    public List<Livraisons> getLivraisonsList() {
+        return livraisonsList;
     }
 
-    public void setCommentaire(String commentaire) {
-        this.commentaire = commentaire;
+    public void setLivraisonsList(List<Livraisons> livraisonsList) {
+        this.livraisonsList = livraisonsList;
     }
 
     @XmlTransient

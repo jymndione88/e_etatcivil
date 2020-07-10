@@ -36,35 +36,27 @@ public class InternauteRoles implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
-    private Integer id;
-    @JoinColumn(name = "id_role", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Roles idRole;
+    private Long id;
     @JoinColumn(name = "id_internaute", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Internautes idInternaute;
+    @JoinColumn(name = "id_role", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Roles idRole;
 
     public InternauteRoles() {
     }
 
-    public InternauteRoles(Integer id) {
+    public InternauteRoles(Long id) {
         this.id = id;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
-    }
-
-    public Roles getIdRole() {
-        return idRole;
-    }
-
-    public void setIdRole(Roles idRole) {
-        this.idRole = idRole;
     }
 
     public Internautes getIdInternaute() {
@@ -73,6 +65,14 @@ public class InternauteRoles implements Serializable {
 
     public void setIdInternaute(Internautes idInternaute) {
         this.idInternaute = idInternaute;
+    }
+
+    public Roles getIdRole() {
+        return idRole;
+    }
+
+    public void setIdRole(Roles idRole) {
+        this.idRole = idRole;
     }
 
     @Override

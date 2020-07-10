@@ -11,6 +11,9 @@ import com.administration.etatcivil.security.NomsRole;
 
 public interface RoleRepository extends JpaRepository<Roles, Long> {
 
-	 @Query("SELECT b FROM Roles b WHERE b.libelle = :nom")
+	@Query("SELECT b FROM Roles b WHERE b.libelle = :nom")
 	 Optional<Roles> findByName(String nom);
+	
+	 @Query("SELECT b FROM Roles b WHERE b.code = :nom")
+	 Optional<Roles> findByCode(String nom);
 }

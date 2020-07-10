@@ -16,9 +16,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.administration.etatcivil.controllers.ArrondissementController;
-import com.administration.etatcivil.entities.Arrondissements;
-import com.administration.etatcivil.repositories.ArrondissementRepository;
+import com.administration.etatcivil.controllers.CommuneController;
+import com.administration.etatcivil.entities.Communes;
+import com.administration.etatcivil.repositories.CommuneRepository;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -34,13 +34,13 @@ import java.util.Optional;
 //@ExtendWith(MockitoExtension.class)
 
 @DisplayName("demarrage avec junit 5 et mockito")
-public class ArrondissementTestMock {
+public class CommuneTestMock {
 
 	@InjectMocks
-    private ArrondissementController metierController;
+    private CommuneController metierController;
 
     @Mock 
-    private ArrondissementRepository metierRepository;
+    private CommuneRepository metierRepository;
 
 	
 	 @BeforeEach
@@ -51,9 +51,9 @@ public class ArrondissementTestMock {
 	
 	@DisplayName("check si instanciation objet constructeur avec parametre et mock")
 	@Test
-	public void checkGetArrondissementById(@Mock Arrondissements arrondissements) {
+	public void checkGetArrondissementById(@Mock Communes arrondissements) {
 		assertNotNull(arrondissements);
-		 Optional<Arrondissements> arr= metierRepository.findById(Long.getLong("1"));	
+		 Optional<Communes> arr= metierRepository.findById(Long.getLong("1"));	
 		 assertEquals("Hello Mockito From Repository", arr.get()); 
 	}
 

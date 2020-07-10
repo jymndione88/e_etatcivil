@@ -77,8 +77,6 @@ Optional<ModePaiements> optionalart = metier.findById(id);
 
         	ModePaiements art = optionalart.get();
         	art.setMode(con.getMode());
-        	art.setOperateur(con.getOperateur());
-        	art.setCodeTransaction(con.getCodeTransaction());
         	
         	 metier.save(art);
         	 

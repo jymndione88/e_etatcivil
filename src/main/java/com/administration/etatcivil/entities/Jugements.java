@@ -7,6 +7,7 @@ package com.administration.etatcivil.entities;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,10 +17,14 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
@@ -31,10 +36,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "Jugements.findAll", query = "SELECT j FROM Jugements j"),
     @NamedQuery(name = "Jugements.findById", query = "SELECT j FROM Jugements j WHERE j.id = :id"),
-    @NamedQuery(name = "Jugements.findByNumero", query = "SELECT j FROM Jugements j WHERE j.numero = :numero"),
     @NamedQuery(name = "Jugements.findByAnnee", query = "SELECT j FROM Jugements j WHERE j.annee = :annee"),
     @NamedQuery(name = "Jugements.findByDate", query = "SELECT j FROM Jugements j WHERE j.date = :date"),
-    @NamedQuery(name = "Jugements.findByLieu", query = "SELECT j FROM Jugements j WHERE j.lieu = :lieu")})
+    @NamedQuery(name = "Jugements.findByLieu", query = "SELECT j FROM Jugements j WHERE j.lieu = :lieu"),
+    @NamedQuery(name = "Jugements.findByNumero", query = "SELECT j FROM Jugements j WHERE j.numero = :numero")})
 public class Jugements implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -43,9 +48,6 @@ public class Jugements implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
-    @Basic(optional = false)
-    @Column(name = "numero")
-    private String numero;
     @Basic(optional = false)
     @Column(name = "annee")
     @Temporal(TemporalType.DATE)
@@ -57,9 +59,15 @@ public class Jugements implements Serializable {
     @Basic(optional = false)
     @Column(name = "lieu")
     private String lieu;
+    @Basic(optional = false)
+    @Column(name = "numero")
+    private int numero;
     @Lob
     @Column(name = "piece_jointe")
     private byte[] pieceJointe;
+    @OneToMany(mappedBy = "idJugement")
+    @JsonIgnore
+    private List<Naissances> naissancesList;
 
     public Jugements() {
     }
@@ -68,12 +76,12 @@ public class Jugements implements Serializable {
         this.id = id;
     }
 
-    public Jugements(Long id, String numero, Date annee, Date date, String lieu) {
+    public Jugements(Long id, Date annee, Date date, String lieu, int numero) {
         this.id = id;
-        this.numero = numero;
         this.annee = annee;
         this.date = date;
         this.lieu = lieu;
+        this.numero = numero;
     }
 
     public Long getId() {
@@ -82,14 +90,6 @@ public class Jugements implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getNumero() {
-        return numero;
-    }
-
-    public void setNumero(String numero) {
-        this.numero = numero;
     }
 
     public Date getAnnee() {
@@ -116,12 +116,29 @@ public class Jugements implements Serializable {
         this.lieu = lieu;
     }
 
+    public int getNumero() {
+        return numero;
+    }
+
+    public void setNumero(int numero) {
+        this.numero = numero;
+    }
+
     public byte[] getPieceJointe() {
         return pieceJointe;
     }
 
     public void setPieceJointe(byte[] pieceJointe) {
         this.pieceJointe = pieceJointe;
+    }
+
+    @XmlTransient
+    public List<Naissances> getNaissancesList() {
+        return naissancesList;
+    }
+
+    public void setNaissancesList(List<Naissances> naissancesList) {
+        this.naissancesList = naissancesList;
     }
 
     @Override
